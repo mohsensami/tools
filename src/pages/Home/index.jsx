@@ -26,6 +26,12 @@ const index = () => {
                             <span>لورم ایپسوم</span>
                         </Link>
                     </div>
+                    <div className="col-span-6 md:col-span-4 border-2 border-gray-400 bg-white flex justify-center items-center rounded-lg">
+                        <Link className="py-16 flex flex-col items-center gap-4" to="/gradiant">
+                            <Copy />
+                            <span>ایجاد گرادیانت</span>
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>
