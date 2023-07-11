@@ -1,5 +1,5 @@
-const PrivateRoute = ({ children }) => {
-    return children;
+const Wrapper = ({ children }) => {
+  return children;
 };
 
-export default PrivateRoute;
+export default Wrapper;
