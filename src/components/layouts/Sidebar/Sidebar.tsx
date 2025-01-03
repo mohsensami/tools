@@ -2,7 +2,7 @@ import Logo from "../../Logo";
 import MenuItem from "./MenuItem";
 
 const menu = [
-  { name: "Dashboard", icon: "dashboard", link: "/" },
+  { name: "Home", icon: "Home", link: "/" },
   { name: "Profile", icon: "Profile", link: "/portfolio" },
 ];
 
