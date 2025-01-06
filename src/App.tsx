@@ -6,6 +6,7 @@ import Home from './page/Home';
 import Movies from './page/Movies';
 import NotFound from './page/NotFound';
 import PowerSupply from './page/PowerSupply';
+import Weather from './page/Weather';
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/movies" element={<Movies />} />
                     <Route path="/power-supply-calculator" element={<PowerSupply />} />
+                    <Route path="/weather" element={<Weather />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
             </Routes>

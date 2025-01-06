@@ -5,6 +5,7 @@ const menu = [
     { name: 'Home', icon: 'Home', link: '/' },
     { name: 'Movies', icon: 'Movies', link: '/movies' },
     { name: 'PowerSupply', icon: 'Power', link: '/power-supply-calculator' },
+    { name: 'weather', icon: 'weather', link: '/weather' },
 ];
 
 const Sidebar = () => {
