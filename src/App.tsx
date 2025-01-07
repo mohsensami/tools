@@ -7,6 +7,7 @@ import Movies from './page/Movies';
 import NotFound from './page/NotFound';
 import PowerSupply from './page/PowerSupply';
 import Weather from './page/Weather';
+import Dictunary from './page/Dictunary';
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
                     <Route path="/movies" element={<Movies />} />
                     <Route path="/power-supply-calculator" element={<PowerSupply />} />
                     <Route path="/weather" element={<Weather />} />
+                    <Route path="/dictunary" element={<Dictunary />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
             </Routes>
