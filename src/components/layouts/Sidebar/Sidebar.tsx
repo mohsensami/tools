@@ -11,7 +11,7 @@ const menu = [
 
 const Sidebar = () => {
     return (
-        <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+        <div id="sidebar" className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
             <Logo />
             <ul className="space-y-2 font-medium">
                 <li>

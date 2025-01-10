@@ -71,3 +71,7 @@ body {
         @apply bg-background text-foreground;
     }
 }
+
+#sidebar .active {
+    background: #ff8000;
+}
