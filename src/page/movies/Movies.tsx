@@ -11,11 +11,18 @@ const Movies = () => {
     // const { data, loading } = useFetch(`/trending/movie/${endpoint}`);
 
     const getTrendingMovies = async () => {
-        const data = await fetchDataFromApi('/trending/movie/day?page=500', '');
+        const data = await fetchDataFromApi(`/trending/movie/${endpoint}?page=${page}`, '');
         return data.results;
     };
 
-    const trendingMovies = useQuery({ queryKey: ['trending-movies'], queryFn: getTrendingMovies, staleTime: 600000 });
+    const trendingMovies = useQuery({
+        queryKey: ['trending-movies', endpoint, page],
+        queryFn: getTrendingMovies,
+        staleTime: 600000,
+    });
+    useEffect(() => {
+        trendingMovies.refetch();
+    }, [endpoint]);
     if (trendingMovies.isLoading || trendingMovies.isFetching)
         return (
             <div className="flex items-center justify-center h-96">
@@ -25,15 +32,21 @@ const Movies = () => {
     return (
         <div>
             <h2 className="text-white text-xl">Trending Movies</h2>
+            <div>
+                <select defaultValue={endpoint} onChange={(e) => setEndpoint(e.target.value)} name="" id="">
+                    <option value="day">Day</option>
+                    <option value="week">Week</option>
+                </select>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
                 {trendingMovies?.data.map((movie: any) => (
                     <MovieCard key={movie.id} data={movie} />
                 ))}
             </div>
             <Pagination
-                page={page}
+                page={(value) => console.log(value)}
                 totalPages={trendingMovies?.data.totalPages}
-                // onPageChange={handlePageChange}
+                onPageChange={() => trendingMovies.refetch()}
             />
         </div>
     );
