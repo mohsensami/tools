@@ -9,21 +9,21 @@ const Weather = () => {
     const [units, setUnits] = useState('metric');
     const [weather, setWeather] = useState(null);
 
-    // useEffect(() => {
-    //     const fetchWeather = async () => {
-    //         const message = query.q ? query.q : 'current location.';
+    useEffect(() => {
+        const fetchWeather = async () => {
+            const message = query.q ? query.q : 'current location.';
 
-    //         alert('Fetching weather for ' + message);
+            alert('Fetching weather for ' + message);
 
-    //         await getFormattedWeatherData({ ...query, units }).then((data) => {
-    //             alert(`Successfully fetched weather for ${data.name}, ${data.country}.`);
+            await getFormattedWeatherData({ ...query, units }).then((data) => {
+                alert(`Successfully fetched weather for ${data.name}, ${data.country}.`);
 
-    //             setWeather(data);
-    //         });
-    //     };
+                setWeather(data);
+            });
+        };
 
-    //     fetchWeather();
-    // }, [query, units]);
+        fetchWeather();
+    }, [query, units]);
     return (
         <div>
             <div className="flex gap-2 lg:w-1/2 mx-auto">

@@ -3,7 +3,7 @@ export default function MovieCard({ data }: any) {
         <div>
             <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
                 <img
-                    className="w-full h-64 object-cover"
+                    className="w-full "
                     src={`https://image.tmdb.org/t/p/w500${data?.poster_path}`}
                     alt={data?.title}
                 />
