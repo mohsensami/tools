@@ -3,6 +3,8 @@ import MovieCard from './MovieCard';
 import { useQuery } from '@tanstack/react-query';
 import { fetchDataFromApi } from '@/services/moviesService';
 import Spinner from '@/components/Spinner';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 const Movies = () => {
     const [endpoint, setEndpoint] = useState('day');
@@ -32,13 +34,17 @@ const Movies = () => {
     return (
         <div>
             <h2 className="text-white text-xl">Trending Movies</h2>
+            <div className="flex gap-1 lg:w-2/3 w-full mx-auto">
+                <Input />
+                <Button>Search</Button>
+            </div>
             <div>
                 <select defaultValue={endpoint} onChange={(e) => setEndpoint(e.target.value)} name="" id="">
                     <option value="day">Day</option>
                     <option value="week">Week</option>
                 </select>
             </div>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-6 p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5  gap-6 p-6">
                 {trendingMovies?.data.map((movie: any) => (
                     <MovieCard key={movie.id} data={movie} />
                 ))}
