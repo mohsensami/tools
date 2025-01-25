@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 const Movies = () => {
+    // https://www.omdbapi.com/?t=xxx&apikey=e4073753
     const [endpoint, setEndpoint] = useState('day');
     const [page, setPage] = useState(1);
 

@@ -9,6 +9,7 @@ import PowerSupply from './page/PowerSupply';
 import Weather from './page/Weather';
 import Dictunary from './page/Dictunary';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import WorldTimes from './page/WorldTimes';
 
 function App() {
     const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ function App() {
                         <Route path="/power-supply-calculator" element={<PowerSupply />} />
                         <Route path="/weather" element={<Weather />} />
                         <Route path="/dictunary" element={<Dictunary />} />
+                        <Route path="/times" element={<WorldTimes />} />
                     </Route>
                     <Route path="*" element={<NotFound />} />
                 </Routes>

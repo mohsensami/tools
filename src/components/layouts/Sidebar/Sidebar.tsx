@@ -7,6 +7,7 @@ const menu = [
     { name: 'PowerSupply', icon: 'Power', link: '/power-supply-calculator' },
     { name: 'weather', icon: 'weather', link: '/weather' },
     { name: 'dictunary', icon: 'dictunary', link: '/dictunary' },
+    { name: 'times', icon: 'times', link: '/times' },
 ];
 
 const Sidebar = () => {
