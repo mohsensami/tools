@@ -56,7 +56,9 @@ const Movies = () => {
             <form onSubmit={handleSubmit}>
                 <div className="flex gap-1 lg:w-2/3 w-full mx-auto">
                     <Input value={query} onChange={(e) => setQuery(e.target.value)} />
-                    <Button type="submit">Search</Button>
+                    <Button disabled={!query} type="submit">
+                        Search
+                    </Button>
                 </div>
             </form>
             <div>

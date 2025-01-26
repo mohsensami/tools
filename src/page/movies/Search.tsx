@@ -9,7 +9,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 
-const Search = ({ serachBtnRef, data }: any) => {
+const Search = ({ serachBtnRef, data, loading }: any) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
