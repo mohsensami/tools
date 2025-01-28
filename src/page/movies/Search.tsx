@@ -16,7 +16,7 @@ const Search = ({ serachBtnRef, data, loading }: any) => {
             <DialogTrigger asChild>
                 <button ref={serachBtnRef}></button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="">
                 {loading ? (
                     <div className="flex justify-center py-8">
                         <Spinner />
@@ -28,8 +28,8 @@ const Search = ({ serachBtnRef, data, loading }: any) => {
                             <DialogDescription>{data?.Plot}</DialogDescription>
                         </DialogHeader>
                         <div className="flex items-center space-x-2">
-                            <div className="max-w-sm mx-auto bg-white rounded-2xl shadow-md overflow-hidden">
-                                <img className="w-full h-64 object-cover" src={data?.Poster} alt="xXx Poster" />
+                            <div className="  bg-white rounded-2xl shadow-md overflow-hidden">
+                                <img className="w-full h-64 " src={data?.Poster} alt="xXx Poster" />
                                 <div className="p-6">
                                     <h2 className="text-2xl font-bold text-gray-800 mb-2">{data.title}</h2>
                                     <p className="text-gray-600 text-sm mb-4">
