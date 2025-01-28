@@ -20,7 +20,6 @@ const Movies = () => {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         serachBtnRef.current.click();
-        console.log('submit:', query);
         setSearchLoading(true);
         const response = await axios(`https://www.omdbapi.com/?t=${query}&apikey=e4073753`);
         setSearchLoading(false);
