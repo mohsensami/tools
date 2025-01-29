@@ -10,10 +10,10 @@ const API_KEY = '435b8ea52a70aa63e9e6a5f39d21241d';
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
 const Weather = () => {
-    const [query, setQuery] = useState({ q: 'tehran' });
+    const [query, setQuery] = useState('tehran');
 
     const getTrendingMovies = async () => {
-        const { data } = await axios(`https://api.openweathermap.org/data/2.5/weather?q=${query.q}&appid=${API_KEY}`);
+        const { data } = await axios(`https://api.openweathermap.org/data/2.5/weather?q=${query}&appid=${API_KEY}`);
         console.log(data);
         return data;
     };
@@ -33,7 +33,7 @@ const Weather = () => {
         <div>
             <form onSubmit={handleSubmit}>
                 <div className="flex gap-2 lg:w-1/2 mx-auto mb-4">
-                    <Input onChange={(value: any) => setQuery(value)} value={query.q} />
+                    <Input onChange={(e: any) => setQuery(e.target.value)} value={query} />
                     <Button disabled={weatherData.isLoading} type="submit">
                         Search
                     </Button>
