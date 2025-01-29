@@ -1,292 +1,118 @@
-import { useEffect, useState } from 'react';
-import getFormattedWeatherData from '../services/weatherService';
+import { useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import Spinner from '@/components/Spinner';
+
+const API_KEY = '435b8ea52a70aa63e9e6a5f39d21241d';
+const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
 const Weather = () => {
     const [query, setQuery] = useState({ q: 'tehran' });
-    const [units, setUnits] = useState('metric');
-    const [weather, setWeather] = useState(null);
 
-    useEffect(() => {
-        const fetchWeather = async () => {
-            const message = query.q ? query.q : 'current location.';
+    const getTrendingMovies = async () => {
+        const { data } = await axios(`https://api.openweathermap.org/data/2.5/weather?q=${query.q}&appid=${API_KEY}`);
+        console.log(data);
+        return data;
+    };
+    const weatherData = useQuery({
+        queryKey: ['weather-data', query],
+        queryFn: getTrendingMovies,
+        staleTime: 600000,
+        enabled: false,
+    });
 
-            alert('Fetching weather for ' + message);
+    const handleSubmit = async (e: any) => {
+        e.preventDefault();
+        weatherData.refetch();
+    };
 
-            await getFormattedWeatherData({ ...query, units }).then((data) => {
-                alert(`Successfully fetched weather for ${data.name}, ${data.country}.`);
-
-                setWeather(data);
-            });
-        };
-
-        fetchWeather();
-    }, [query, units]);
     return (
         <div>
-            <div className="flex gap-2 lg:w-1/2 mx-auto">
-                <Input onChange={(value) => setQuery(value)} value={query.q} />
-                <Button>Search</Button>
-            </div>
-            <div className="flex flex-col items-center justify-center  min-h-screen text-gray-700 p-10 bg-gradient-to-br ">
-                <div className="w-full max-w-screen-sm bg-white p-10 rounded-xl ring-8 ring-white ring-opacity-40">
-                    <div className="flex justify-between">
-                        <div className="flex flex-col">
-                            <span className="text-6xl font-bold">29°C</span>
-                            <span className="font-semibold mt-1 text-gray-500">Mudjimba, QLD</span>
-                        </div>
-                        <svg
-                            className="h-24 w-24 fill-current text-yellow-400"
-                            xmlns="http://www.w3.org/2000/svg"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            width="24"
-                        >
-                            <path d="M0 0h24v24H0V0z" fill="none" />
-                            <path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79zM1 10.5h3v2H1zM11 .55h2V3.5h-2zm8.04 2.495l1.408 1.407-1.79 1.79-1.407-1.408zm-1.8 15.115l1.79 1.8 1.41-1.41-1.8-1.79zM20 10.5h3v2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1 4h2v2.95h-2zm-7.45-.96l1.41 1.41 1.79-1.8-1.41-1.41z" />
-                        </svg>
-                    </div>
-                    <div className="flex justify-between mt-12">
-                        <div className="flex flex-col items-center">
-                            <span className="font-semibold text-lg">29°C</span>
-                            <svg
-                                className="h-10 w-10 fill-current text-gray-400 mt-3"
-                                xmlns="http://www.w3.org/2000/svg"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                width="24"
-                            >
-                                <path d="M0 0h24v24H0V0z" fill="none" />
-                                <path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79zM1 10.5h3v2H1zM11 .55h2V3.5h-2zm8.04 2.495l1.408 1.407-1.79 1.79-1.407-1.408zm-1.8 15.115l1.79 1.8 1.41-1.41-1.8-1.79zM20 10.5h3v2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1 4h2v2.95h-2zm-7.45-.96l1.41 1.41 1.79-1.8-1.41-1.41z" />
-                            </svg>
-                            <span className="font-semibold mt-1 text-sm">11:00</span>
-                            <span className="text-xs font-semibold text-gray-400">AM</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="font-semibold text-lg">31°C</span>
-                            <svg
-                                className="h-10 w-10 fill-current text-gray-400 mt-3"
-                                xmlns="http://www.w3.org/2000/svg"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                width="24"
-                            >
-                                <path d="M0 0h24v24H0V0z" fill="none" />
-                                <path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79zM1 10.5h3v2H1zM11 .55h2V3.5h-2zm8.04 2.495l1.408 1.407-1.79 1.79-1.407-1.408zm-1.8 15.115l1.79 1.8 1.41-1.41-1.8-1.79zM20 10.5h3v2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1 4h2v2.95h-2zm-7.45-.96l1.41 1.41 1.79-1.8-1.41-1.41z" />
-                            </svg>
-                            <span className="font-semibold mt-1 text-sm">1:00</span>
-                            <span className="text-xs font-semibold text-gray-400">PM</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="font-semibold text-lg">32°C</span>
-                            <svg
-                                className="h-10 w-10 fill-current text-gray-400 mt-3"
-                                xmlns="http://www.w3.org/2000/svg"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                width="24"
-                            >
-                                <path d="M0 0h24v24H0V0z" fill="none" />
-                                <path d="M12.01 6c2.61 0 4.89 1.86 5.4 4.43l.3 1.5 1.52.11c1.56.11 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3h-13c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.95 6 12.01 6m0-2C9.12 4 6.6 5.64 5.35 8.04 2.35 8.36.01 10.91.01 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96C18.68 6.59 15.65 4 12.01 4z" />
-                            </svg>
-                            <span className="font-semibold mt-1 text-sm">3:00</span>
-                            <span className="text-xs font-semibold text-gray-400">PM</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="font-semibold text-lg">31°C</span>
-                            <svg
-                                className="h-10 w-10 fill-current text-gray-400 mt-3"
-                                xmlns="http://www.w3.org/2000/svg"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                width="24"
-                            >
-                                <path d="M0 0h24v24H0V0z" fill="none" />
-                                <path d="M12.01 6c2.61 0 4.89 1.86 5.4 4.43l.3 1.5 1.52.11c1.56.11 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3h-13c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.95 6 12.01 6m0-2C9.12 4 6.6 5.64 5.35 8.04 2.35 8.36.01 10.91.01 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96C18.68 6.59 15.65 4 12.01 4z" />
-                            </svg>
-                            <span className="font-semibold mt-1 text-sm">5:00</span>
-                            <span className="text-xs font-semibold text-gray-400">PM</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="font-semibold text-lg">27°C</span>
-                            <svg
-                                className="h-10 w-10 fill-current text-gray-400 mt-3"
-                                xmlns="http://www.w3.org/2000/svg"
-                                enable-background="new 0 0 24 24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                width="24"
-                            >
-                                <g>
-                                    <rect fill="none" height="24" width="24" />
-                                </g>
-                                <g>
-                                    <g>
-                                        <path d="M19.78,17.51c-2.47,0-6.57-1.33-8.68-5.43C8.77,7.57,10.6,3.6,11.63,2.01C6.27,2.2,1.98,6.59,1.98,12 c0,0.14,0.02,0.28,0.02,0.42C2.61,12.16,3.28,12,3.98,12c0,0,0,0,0,0c0-3.09,1.73-5.77,4.3-7.1C7.78,7.09,7.74,9.94,9.32,13 c1.57,3.04,4.18,4.95,6.8,5.86c-1.23,0.74-2.65,1.15-4.13,1.15c-0.5,0-1-0.05-1.48-0.14c-0.37,0.7-0.94,1.27-1.64,1.64 c0.98,0.32,2.03,0.5,3.11,0.5c3.5,0,6.58-1.8,8.37-4.52C20.18,17.5,19.98,17.51,19.78,17.51z" />
-                                        <path d="M7,16l-0.18,0C6.4,14.84,5.3,14,4,14c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.62,0,2.49,0,3,0c1.1,0,2-0.9,2-2 C9,16.9,8.1,16,7,16z" />
-                                    </g>
-                                </g>
-                            </svg>
-                            <span className="font-semibold mt-1 text-sm">7:00</span>
-                            <span className="text-xs font-semibold text-gray-400">PM</span>
-                        </div>
-                    </div>
+            <form onSubmit={handleSubmit}>
+                <div className="flex gap-2 lg:w-1/2 mx-auto mb-4">
+                    <Input onChange={(value: any) => setQuery(value)} value={query.q} />
+                    <Button disabled={weatherData.isLoading} type="submit">
+                        Search
+                    </Button>
                 </div>
-                <div className="flex flex-col space-y-6 w-full max-w-screen-sm bg-white p-10 mt-10 rounded-xl ring-8 ring-white ring-opacity-40">
-                    <div className="flex justify-between items-center">
-                        <span className="font-semibold text-lg w-1/4">Fri, 22 Jan</span>
-                        <div className="flex items-center justify-end w-1/4 pr-10">
-                            <span className="font-semibold">12%</span>
-                            <svg
-                                className="w-6 h-6 fill-current ml-1"
-                                viewBox="0 0 16 20"
-                                version="1.1"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <g transform="matrix(1,0,0,1,-4,-2)">
-                                    <path
-                                        d="M17.66,8L12.71,3.06C12.32,2.67 11.69,2.67 11.3,3.06L6.34,8C4.78,9.56 4,11.64 4,13.64C4,15.64 4.78,17.75 6.34,19.31C7.9,20.87 9.95,21.66 12,21.66C14.05,21.66 16.1,20.87 17.66,19.31C19.22,17.75 20,15.64 20,13.64C20,11.64 19.22,9.56 17.66,8ZM6,14C6.01,12 6.62,10.73 7.76,9.6L12,5.27L16.24,9.65C17.38,10.77 17.99,12 18,14C18.016,17.296 14.96,19.809 12,19.74C9.069,19.672 5.982,17.655 6,14Z"
-                                        s="fill-rule:nonzero;"
+            </form>
+            {weatherData?.data?.name ? (
+                <>
+                    {weatherData.isLoading || weatherData.isFetching ? (
+                        <Spinner />
+                    ) : (
+                        <div className="max-w-md mx-auto bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg shadow-lg overflow-hidden">
+                            <div className="p-6 text-white">
+                                <h2 className="text-3xl font-bold mb-2 text-center">{weatherData?.data?.name}</h2>
+                                <div className="flex items-center justify-center mb-4">
+                                    <img
+                                        src={`http://openweathermap.org/img/wn/${weatherData?.data?.weather[0].icon}.png`}
+                                        alt={weatherData?.data?.weather[0].description}
+                                        className="w-16 h-16"
                                     />
-                                </g>
-                            </svg>
+                                    <span className="text-5xl font-extrabold mx-4">
+                                        {(weatherData?.data?.main.temp - 273.15).toFixed(1)}°C
+                                    </span>
+                                </div>
+                                <p className="text-xl text-center">{weatherData?.data?.weather[0].description}</p>
+                                <div className="grid grid-cols-2 gap-4 mt-4">
+                                    <div className="flex items-center bg-white bg-opacity-20 p-3 rounded-lg">
+                                        <img
+                                            src="https://img.icons8.com/ios-filled/50/ffffff/humidity.png"
+                                            alt="Humidity"
+                                            className="w-8 h-8 mr-2"
+                                        />
+                                        <span>Humidity: {weatherData?.data?.main.humidity}%</span>
+                                    </div>
+                                    <div className="flex items-center bg-white bg-opacity-20 p-3 rounded-lg">
+                                        <img
+                                            src="https://img.icons8.com/ios-filled/50/ffffff/wind.png"
+                                            alt="Wind Speed"
+                                            className="w-8 h-8 mr-2"
+                                        />
+                                        <span>Wind: {weatherData?.data?.wind.speed} m/s</span>
+                                    </div>
+                                    <div className="flex items-center bg-white bg-opacity-20 p-3 rounded-lg">
+                                        <img
+                                            src="https://img.icons8.com/ios-filled/50/ffffff/barometer.png"
+                                            alt="Pressure"
+                                            className="w-8 h-8 mr-2"
+                                        />
+                                        <span>Pressure: {weatherData?.data?.main.pressure} hPa</span>
+                                    </div>
+                                    <div className="flex items-center bg-white bg-opacity-20 p-3 rounded-lg">
+                                        <img
+                                            src="https://img.icons8.com/ios-filled/50/ffffff/sun.png"
+                                            alt="Sunrise"
+                                            className="w-8 h-8 mr-2"
+                                        />
+                                        <span>
+                                            Sunrise:{' '}
+                                            {new Date(weatherData?.data?.sys.sunrise * 1000).toLocaleTimeString()}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center bg-white bg-opacity-20 p-3 rounded-lg">
+                                        <img
+                                            src="https://img.icons8.com/ios-filled/50/ffffff/sunset.png"
+                                            alt="Sunset"
+                                            className="w-8 h-8 mr-2"
+                                        />
+                                        <span>
+                                            Sunset:{' '}
+                                            {new Date(weatherData?.data?.sys.sunset * 1000).toLocaleTimeString()}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <svg
-                            className="h-8 w-8 fill-current w-1/4"
-                            xmlns="http://www.w3.org/2000/svg"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            width="24"
-                        >
-                            <path d="M0 0h24v24H0V0z" fill="none" />
-                            <path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79zM1 10.5h3v2H1zM11 .55h2V3.5h-2zm8.04 2.495l1.408 1.407-1.79 1.79-1.407-1.408zm-1.8 15.115l1.79 1.8 1.41-1.41-1.8-1.79zM20 10.5h3v2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1 4h2v2.95h-2zm-7.45-.96l1.41 1.41 1.79-1.8-1.41-1.41z" />
-                        </svg>
-                        <span className="font-semibold text-lg w-1/4 text-right">18° / 32°</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                        <span className="font-semibold text-lg w-1/4">Sat, 23 Jan</span>
-                        <div className="flex items-center justify-end pr-10 w-1/4">
-                            <span className="font-semibold">0%</span>
-                            <svg
-                                className="w-6 h-6 fill-current ml-1"
-                                viewBox="0 0 16 20"
-                                version="1.1"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <g transform="matrix(1,0,0,1,-4,-2)">
-                                    <path
-                                        d="M17.66,8L12.71,3.06C12.32,2.67 11.69,2.67 11.3,3.06L6.34,8C4.78,9.56 4,11.64 4,13.64C4,15.64 4.78,17.75 6.34,19.31C7.9,20.87 9.95,21.66 12,21.66C14.05,21.66 16.1,20.87 17.66,19.31C19.22,17.75 20,15.64 20,13.64C20,11.64 19.22,9.56 17.66,8ZM6,14C6.01,12 6.62,10.73 7.76,9.6L12,5.27L16.24,9.65C17.38,10.77 17.99,12 18,14C18.016,17.296 14.96,19.809 12,19.74C9.069,19.672 5.982,17.655 6,14Z"
-                                        s="fill-rule:nonzero;"
-                                    />
-                                </g>
-                            </svg>
-                        </div>
-                        <svg
-                            className="h-8 w-8 fill-current w-1/4"
-                            xmlns="http://www.w3.org/2000/svg"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            width="24"
-                        >
-                            <path d="M0 0h24v24H0V0z" fill="none" />
-                            <path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79zM1 10.5h3v2H1zM11 .55h2V3.5h-2zm8.04 2.495l1.408 1.407-1.79 1.79-1.407-1.408zm-1.8 15.115l1.79 1.8 1.41-1.41-1.8-1.79zM20 10.5h3v2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1 4h2v2.95h-2zm-7.45-.96l1.41 1.41 1.79-1.8-1.41-1.41z" />
-                        </svg>
-                        <span className="font-semibold text-lg w-1/4 text-right">22° / 34°</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                        <span className="font-semibold text-lg w-1/4">Sun, 24 Jan</span>
-                        <div className="flex items-center justify-end pr-10 w-1/4">
-                            <span className="font-semibold">20%</span>
-                            <svg
-                                className="w-6 h-6 fill-current ml-1"
-                                viewBox="0 0 16 20"
-                                version="1.1"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <g transform="matrix(1,0,0,1,-4,-2)">
-                                    <path
-                                        d="M17.66,8L12.71,3.06C12.32,2.67 11.69,2.67 11.3,3.06L6.34,8C4.78,9.56 4,11.64 4,13.64C4,15.64 4.78,17.75 6.34,19.31C7.9,20.87 9.95,21.66 12,21.66C14.05,21.66 16.1,20.87 17.66,19.31C19.22,17.75 20,15.64 20,13.64C20,11.64 19.22,9.56 17.66,8ZM6,14C6.01,12 6.62,10.73 7.76,9.6L12,5.27L16.24,9.65C17.38,10.77 17.99,12 18,14C18.016,17.296 14.96,19.809 12,19.74C9.069,19.672 5.982,17.655 6,14Z"
-                                        s="fill-rule:nonzero;"
-                                    />
-                                </g>
-                            </svg>
-                        </div>
-                        <svg
-                            className="h-8 w-8 fill-current w-1/4"
-                            xmlns="http://www.w3.org/2000/svg"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            width="24"
-                        >
-                            <path d="M0 0h24v24H0V0z" fill="none" />
-                            <path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79zM1 10.5h3v2H1zM11 .55h2V3.5h-2zm8.04 2.495l1.408 1.407-1.79 1.79-1.407-1.408zm-1.8 15.115l1.79 1.8 1.41-1.41-1.8-1.79zM20 10.5h3v2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1 4h2v2.95h-2zm-7.45-.96l1.41 1.41 1.79-1.8-1.41-1.41z" />
-                        </svg>
-                        <span className="font-semibold text-lg w-1/4 text-right">21° / 32°</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                        <span className="font-semibold text-lg w-1/4">Mon, 25 Jan</span>
-                        <div className="flex items-center justify-end pr-10 w-1/4">
-                            <span className="font-semibold">50%</span>
-                            <svg
-                                className="w-6 h-6 fill-current ml-1"
-                                viewBox="0 0 16 20"
-                                version="1.1"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <g transform="matrix(1,0,0,1,-4,-2)">
-                                    <path
-                                        d="M17.66,8L12.71,3.06C12.32,2.67 11.69,2.67 11.3,3.06L6.34,8C4.78,9.56 4,11.64 4,13.64C4,15.64 4.78,17.75 6.34,19.31C7.9,20.87 9.95,21.66 12,21.66C14.05,21.66 16.1,20.87 17.66,19.31C19.22,17.75 20,15.64 20,13.64C20,11.64 19.22,9.56 17.66,8ZM6,14C6.01,12 6.62,10.73 7.76,9.6L12,5.27L16.24,9.65C17.38,10.77 17.99,12 18,14C18.016,17.296 14.96,19.809 12,19.74C9.069,19.672 5.982,17.655 6,14Z"
-                                        s="fill-rule:nonzero;"
-                                    />
-                                </g>
-                            </svg>
-                        </div>
-                        <svg
-                            className="h-8 w-8 fill-current w-1/4"
-                            xmlns="http://www.w3.org/2000/svg"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            width="24"
-                        >
-                            <path d="M0 0h24v24H0V0z" fill="none" />
-                            <path d="M12.01 6c2.61 0 4.89 1.86 5.4 4.43l.3 1.5 1.52.11c1.56.11 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3h-13c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.95 6 12.01 6m0-2C9.12 4 6.6 5.64 5.35 8.04 2.35 8.36.01 10.91.01 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96C18.68 6.59 15.65 4 12.01 4z" />
-                        </svg>
-                        <span className="font-semibold text-lg w-1/4 text-right">18° / 29°</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                        <span className="font-semibold text-lg w-1/4">Tue, 26 Jan</span>
-                        <div className="flex items-center justify-center w-1/4">
-                            <span className="font-semibold">80%</span>
-                            <svg
-                                className="w-6 h-6 fill-current ml-1"
-                                viewBox="0 0 16 20"
-                                version="1.1"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <g transform="matrix(1,0,0,1,-4,-2)">
-                                    <path
-                                        d="M17.66,8L12.71,3.06C12.32,2.67 11.69,2.67 11.3,3.06L6.34,8C4.78,9.56 4,11.64 4,13.64C4,15.64 4.78,17.75 6.34,19.31C7.9,20.87 9.95,21.66 12,21.66C14.05,21.66 16.1,20.87 17.66,19.31C19.22,17.75 20,15.64 20,13.64C20,11.64 19.22,9.56 17.66,8ZM6,14C6.01,12 6.62,10.73 7.76,9.6L12,5.27L16.24,9.65C17.38,10.77 17.99,12 18,14C18.016,17.296 14.96,19.809 12,19.74C9.069,19.672 5.982,17.655 6,14Z"
-                                        s="fill-rule:nonzero;"
-                                    />
-                                </g>
-                            </svg>
-                        </div>
-                        <svg
-                            className="h-8 w-8 fill-current w-1/4"
-                            xmlns="http://www.w3.org/2000/svg"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            width="24"
-                        >
-                            <path d="M0 0h24v24H0V0z" fill="none" />
-                            <path d="M12.01 6c2.61 0 4.89 1.86 5.4 4.43l.3 1.5 1.52.11c1.56.11 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3h-13c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.95 6 12.01 6m0-2C9.12 4 6.6 5.64 5.35 8.04 2.35 8.36.01 10.91.01 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96C18.68 6.59 15.65 4 12.01 4z" />
-                        </svg>
-                        <span className="font-semibold text-lg w-1/4 text-right">20° / 29°</span>
-                    </div>
-                </div>
-            </div>
+                    )}
+                </>
+            ) : (
+                <div>Empty</div>
+            )}
         </div>
     );
 };
