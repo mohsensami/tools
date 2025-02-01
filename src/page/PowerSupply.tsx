@@ -32,12 +32,24 @@ const ramData = {
   },
 };
 
+const storageData = {
+  Type: ["SSD", "M.2", "HDD"],
+  Number: [1, 2, 4],
+  PowerConsumption: {
+    SSD: { 1: 3, 2: 6, 4: 12 },
+    "M.2": { 1: 5, 2: 10, 4: 20 },
+    HDD: { 1: 6, 2: 12, 4: 24 },
+  },
+};
+
 const PowerSupply = () => {
   const [brand, setBrand] = useState("");
   const [socket, setSocket] = useState("");
   const [model, setModel] = useState("");
   const [ramModule, setRamModule] = useState("");
   const [ramNumber, setRamNumber] = useState("");
+  const [storageType, setStorageType] = useState("");
+  const [storageNumber, setStorageNumber] = useState("");
 
   const handleBrandChange = (e) => {
     setBrand(e.target.value);
@@ -54,6 +66,9 @@ const PowerSupply = () => {
     (model ? cpuData.PowerConsumption[model] : 0) +
     (ramModule && ramNumber
       ? ramData.PowerConsumption[ramModule][ramNumber]
+      : 0) +
+    (storageType && storageNumber
+      ? storageData.PowerConsumption[storageType][storageNumber]
       : 0);
 
   return (
@@ -124,6 +139,34 @@ const PowerSupply = () => {
         <option value="">Please select</option>
         {ramModule &&
           ramData.Number.map((num) => (
+            <option key={num} value={num}>
+              {num}
+            </option>
+          ))}
+      </select>
+
+      <label className="block text-sm font-medium">Storage Type</label>
+      <select
+        className="w-full p-2 border rounded mb-2"
+        onChange={(e) => setStorageType(e.target.value)}
+      >
+        <option value="">Please select</option>
+        {storageData.Type.map((type) => (
+          <option key={type} value={type}>
+            {type}
+          </option>
+        ))}
+      </select>
+
+      <label className="block text-sm font-medium">Number of Storage</label>
+      <select
+        className="w-full p-2 border rounded mb-2"
+        onChange={(e) => setStorageNumber(parseInt(e.target.value))}
+        disabled={!storageType}
+      >
+        <option value="">Please select</option>
+        {storageType &&
+          storageData.Number.map((num) => (
             <option key={num} value={num}>
               {num}
             </option>
