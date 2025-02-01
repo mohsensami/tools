@@ -23,10 +23,21 @@ const cpuData = {
   },
 };
 
+const ramData = {
+  Module: ["DDR4", "DDR5"],
+  Number: [1, 2, 4],
+  PowerConsumption: {
+    DDR4: { 1: 5, 2: 10, 4: 20 },
+    DDR5: { 1: 6, 2: 12, 4: 24 },
+  },
+};
+
 const PowerSupply = () => {
   const [brand, setBrand] = useState("");
   const [socket, setSocket] = useState("");
   const [model, setModel] = useState("");
+  const [ramModule, setRamModule] = useState("");
+  const [ramNumber, setRamNumber] = useState("");
 
   const handleBrandChange = (e) => {
     setBrand(e.target.value);
@@ -39,7 +50,11 @@ const PowerSupply = () => {
     setModel("");
   };
 
-  const totalPower = model ? cpuData.PowerConsumption[model] : 0;
+  const totalPower =
+    (model ? cpuData.PowerConsumption[model] : 0) +
+    (ramModule && ramNumber
+      ? ramData.PowerConsumption[ramModule][ramNumber]
+      : 0);
 
   return (
     <div className="p-4 bg-gray-100 rounded-lg shadow-md w-96">
@@ -49,7 +64,7 @@ const PowerSupply = () => {
         className="w-full p-2 border rounded mb-2"
         onChange={handleBrandChange}
       >
-        <option value="">Select Brand</option>
+        <option value="">Please select</option>
         {Object.keys(cpuData.Brand).map((b) => (
           <option key={b} value={b}>
             {b}
@@ -57,39 +72,63 @@ const PowerSupply = () => {
         ))}
       </select>
 
-      {brand && (
-        <>
-          <label className="block text-sm font-medium">Socket</label>
-          <select
-            className="w-full p-2 border rounded mb-2"
-            onChange={handleSocketChange}
-          >
-            <option value="">Select Socket</option>
-            {cpuData.Brand[brand].map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </>
-      )}
+      <label className="block text-sm font-medium">Socket</label>
+      <select
+        className="w-full p-2 border rounded mb-2"
+        onChange={handleSocketChange}
+        disabled={!brand}
+      >
+        <option value="">Please select</option>
+        {brand &&
+          cpuData.Brand[brand].map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+      </select>
 
-      {socket && (
-        <>
-          <label className="block text-sm font-medium">Model</label>
-          <select
-            className="w-full p-2 border rounded mb-2"
-            onChange={(e) => setModel(e.target.value)}
-          >
-            <option value="">Select Model</option>
-            {cpuData.Socket[socket].map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
-        </>
-      )}
+      <label className="block text-sm font-medium">Model</label>
+      <select
+        className="w-full p-2 border rounded mb-2"
+        onChange={(e) => setModel(e.target.value)}
+        disabled={!socket}
+      >
+        <option value="">Please select</option>
+        {socket &&
+          cpuData.Socket[socket].map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          ))}
+      </select>
+
+      <label className="block text-sm font-medium">Memory Module</label>
+      <select
+        className="w-full p-2 border rounded mb-2"
+        onChange={(e) => setRamModule(e.target.value)}
+      >
+        <option value="">Please select</option>
+        {ramData.Module.map((mod) => (
+          <option key={mod} value={mod}>
+            {mod}
+          </option>
+        ))}
+      </select>
+
+      <label className="block text-sm font-medium">Number of RAM</label>
+      <select
+        className="w-full p-2 border rounded mb-2"
+        onChange={(e) => setRamNumber(parseInt(e.target.value))}
+        disabled={!ramModule}
+      >
+        <option value="">Please select</option>
+        {ramModule &&
+          ramData.Number.map((num) => (
+            <option key={num} value={num}>
+              {num}
+            </option>
+          ))}
+      </select>
 
       <div className="mt-4 text-lg font-semibold">
         Total Power: {totalPower}W
