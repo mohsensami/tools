@@ -72,109 +72,115 @@ const PowerSupply = () => {
       : 0);
 
   return (
-    <div className="p-4 bg-gray-100 rounded-lg shadow-md w-96">
-      <h2 className="text-xl font-bold mb-4">Power Supply Calculator</h2>
-      <label className="block text-sm font-medium">CPU Brand</label>
-      <select
-        className="w-full p-2 border rounded mb-2"
-        onChange={handleBrandChange}
-      >
-        <option value="">Please select</option>
-        {Object.keys(cpuData.Brand).map((b) => (
-          <option key={b} value={b}>
-            {b}
-          </option>
-        ))}
-      </select>
+    <div className="p-4 bg-gray-100 rounded-lg shadow-md w-full">
+      <div className="grid grid-cols-2">
+        <div>
+          <h2 className="text-xl font-bold mb-4">Power Supply Calculator</h2>
+          <label className="block text-sm font-medium">CPU Brand</label>
+          <select
+            className="w-full p-2 border rounded mb-2"
+            onChange={handleBrandChange}
+          >
+            <option value="">Please select</option>
+            {Object.keys(cpuData.Brand).map((b) => (
+              <option key={b} value={b}>
+                {b}
+              </option>
+            ))}
+          </select>
 
-      <label className="block text-sm font-medium">Socket</label>
-      <select
-        className="w-full p-2 border rounded mb-2"
-        onChange={handleSocketChange}
-        disabled={!brand}
-      >
-        <option value="">Please select</option>
-        {brand &&
-          cpuData.Brand[brand].map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-      </select>
+          <label className="block text-sm font-medium">Socket</label>
+          <select
+            className="w-full p-2 border rounded mb-2"
+            onChange={handleSocketChange}
+            disabled={!brand}
+          >
+            <option value="">Please select</option>
+            {brand &&
+              cpuData.Brand[brand].map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+          </select>
 
-      <label className="block text-sm font-medium">Model</label>
-      <select
-        className="w-full p-2 border rounded mb-2"
-        onChange={(e) => setModel(e.target.value)}
-        disabled={!socket}
-      >
-        <option value="">Please select</option>
-        {socket &&
-          cpuData.Socket[socket].map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-      </select>
+          <label className="block text-sm font-medium">Model</label>
+          <select
+            className="w-full p-2 border rounded mb-2"
+            onChange={(e) => setModel(e.target.value)}
+            disabled={!socket}
+          >
+            <option value="">Please select</option>
+            {socket &&
+              cpuData.Socket[socket].map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+          </select>
 
-      <label className="block text-sm font-medium">Memory Module</label>
-      <select
-        className="w-full p-2 border rounded mb-2"
-        onChange={(e) => setRamModule(e.target.value)}
-      >
-        <option value="">Please select</option>
-        {ramData.Module.map((mod) => (
-          <option key={mod} value={mod}>
-            {mod}
-          </option>
-        ))}
-      </select>
+          <hr className="my-2" />
 
-      <label className="block text-sm font-medium">Number of RAM</label>
-      <select
-        className="w-full p-2 border rounded mb-2"
-        onChange={(e) => setRamNumber(parseInt(e.target.value))}
-        disabled={!ramModule}
-      >
-        <option value="">Please select</option>
-        {ramModule &&
-          ramData.Number.map((num) => (
-            <option key={num} value={num}>
-              {num}
-            </option>
-          ))}
-      </select>
+          <label className="block text-sm font-medium">Memory Module</label>
+          <select
+            className="w-full p-2 border rounded mb-2"
+            onChange={(e) => setRamModule(e.target.value)}
+          >
+            <option value="">Please select</option>
+            {ramData.Module.map((mod) => (
+              <option key={mod} value={mod}>
+                {mod}
+              </option>
+            ))}
+          </select>
 
-      <label className="block text-sm font-medium">Storage Type</label>
-      <select
-        className="w-full p-2 border rounded mb-2"
-        onChange={(e) => setStorageType(e.target.value)}
-      >
-        <option value="">Please select</option>
-        {storageData.Type.map((type) => (
-          <option key={type} value={type}>
-            {type}
-          </option>
-        ))}
-      </select>
+          <label className="block text-sm font-medium">Number of RAM</label>
+          <select
+            className="w-full p-2 border rounded mb-2"
+            onChange={(e) => setRamNumber(parseInt(e.target.value))}
+            disabled={!ramModule}
+          >
+            <option value="">Please select</option>
+            {ramModule &&
+              ramData.Number.map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))}
+          </select>
 
-      <label className="block text-sm font-medium">Number of Storage</label>
-      <select
-        className="w-full p-2 border rounded mb-2"
-        onChange={(e) => setStorageNumber(parseInt(e.target.value))}
-        disabled={!storageType}
-      >
-        <option value="">Please select</option>
-        {storageType &&
-          storageData.Number.map((num) => (
-            <option key={num} value={num}>
-              {num}
-            </option>
-          ))}
-      </select>
+          <label className="block text-sm font-medium">Storage Type</label>
+          <select
+            className="w-full p-2 border rounded mb-2"
+            onChange={(e) => setStorageType(e.target.value)}
+          >
+            <option value="">Please select</option>
+            {storageData.Type.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
 
-      <div className="mt-4 text-lg font-semibold">
-        Total Power: {totalPower}W
+          <label className="block text-sm font-medium">Number of Storage</label>
+          <select
+            className="w-full p-2 border rounded mb-2"
+            onChange={(e) => setStorageNumber(parseInt(e.target.value))}
+            disabled={!storageType}
+          >
+            <option value="">Please select</option>
+            {storageType &&
+              storageData.Number.map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))}
+          </select>
+        </div>
+
+        <div className="mt-4 text-3xl font-bold flex justify-center items-center">
+          Total Power: {totalPower}W
+        </div>
       </div>
     </div>
   );
