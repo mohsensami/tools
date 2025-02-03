@@ -39,12 +39,19 @@ const data = {
     },
   },
   ram: {
-    "Memory Module": ["DDR4", "DDR5"],
-    Number: [1, 2, 3, 4, 5, 6],
+    modules: [
+      { name: "DDR4", power: 5 },
+      { name: "DDR5", power: 7 },
+    ],
+    number: [1, 2, 3, 4, 5, 6],
   },
   storage: {
-    Type: ["HDD", "SSD", "M.2"],
-    Number: [1, 2, 3, 4, 5, 6],
+    types: [
+      { name: "HDD", power: 8 },
+      { name: "SSD", power: 4 },
+      { name: "M.2", power: 3 },
+    ],
+    number: [1, 2, 3, 4, 5, 6],
   },
 };
 
@@ -53,34 +60,41 @@ const PowerSupply = () => {
   const [socket, setSocket] = useState("Not Selected");
   const [model, setModel] = useState("Not Selected");
   const [ramType, setRamType] = useState("Not Selected");
-  const [ramNumber, setRamNumber] = useState("Not Selected");
+  const [ramNumber, setRamNumber] = useState(1);
   const [storageType, setStorageType] = useState("Not Selected");
-  const [storageNumber, setStorageNumber] = useState("Not Selected");
-  const [powerSupply, setPowerSupply] = useState(null);
+  const [storageNumber, setStorageNumber] = useState(1);
+  const [totalPower, setTotalPower] = useState(0);
 
-  const handleBrandChange = (e) => {
-    setBrand(e.target.value);
-    setSocket("Not Selected");
-    setModel("Not Selected");
-    setPowerSupply(null);
-  };
+  const updatePower = () => {
+    let power = 0;
 
-  const handleSocketChange = (e) => {
-    setSocket(e.target.value);
-    setModel("Not Selected");
-    setPowerSupply(null);
-  };
-
-  const handleModelChange = (e) => {
-    setModel(e.target.value);
-    if (e.target.value !== "Not Selected") {
-      const selectedModel = data.cpu[brand][socket].models.find(
-        (m) => m.name === e.target.value
+    // CPU Power
+    if (
+      brand !== "Not Selected" &&
+      socket !== "Not Selected" &&
+      model !== "Not Selected"
+    ) {
+      const selectedCpu = data.cpu[brand][socket].models.find(
+        (m) => m.name === model
       );
-      setPowerSupply(selectedModel ? selectedModel.power : null);
-    } else {
-      setPowerSupply(null);
+      power += selectedCpu ? selectedCpu.power : 0;
     }
+
+    // RAM Power
+    if (ramType !== "Not Selected") {
+      const selectedRam = data.ram.modules.find((r) => r.name === ramType);
+      power += selectedRam ? selectedRam.power * ramNumber : 0;
+    }
+
+    // Storage Power
+    if (storageType !== "Not Selected") {
+      const selectedStorage = data.storage.types.find(
+        (s) => s.name === storageType
+      );
+      power += selectedStorage ? selectedStorage.power * storageNumber : 0;
+    }
+
+    setTotalPower(power);
   };
 
   return (
@@ -93,7 +107,12 @@ const PowerSupply = () => {
           <label>Brand:</label>
           <select
             value={brand}
-            onChange={handleBrandChange}
+            onChange={(e) => {
+              setBrand(e.target.value);
+              setSocket("Not Selected");
+              setModel("Not Selected");
+              updatePower();
+            }}
             className="p-2 border rounded"
           >
             <option>Not Selected</option>
@@ -107,7 +126,11 @@ const PowerSupply = () => {
           <label>Socket:</label>
           <select
             value={socket}
-            onChange={handleSocketChange}
+            onChange={(e) => {
+              setSocket(e.target.value);
+              setModel("Not Selected");
+              updatePower();
+            }}
             className="p-2 border rounded"
           >
             <option>Not Selected</option>
@@ -122,7 +145,10 @@ const PowerSupply = () => {
           <label>Model:</label>
           <select
             value={model}
-            onChange={handleModelChange}
+            onChange={(e) => {
+              setModel(e.target.value);
+              updatePower();
+            }}
             className="p-2 border rounded"
           >
             <option>Not Selected</option>
@@ -140,13 +166,16 @@ const PowerSupply = () => {
           <label>Memory Module:</label>
           <select
             value={ramType}
-            onChange={(e) => setRamType(e.target.value)}
+            onChange={(e) => {
+              setRamType(e.target.value);
+              updatePower();
+            }}
             className="p-2 border rounded"
           >
             <option>Not Selected</option>
-            {data.ram["Memory Module"].map((r) => (
-              <option key={r} value={r}>
-                {r}
+            {data.ram.modules.map((r) => (
+              <option key={r.name} value={r.name}>
+                {r.name}
               </option>
             ))}
           </select>
@@ -154,11 +183,13 @@ const PowerSupply = () => {
           <label>Number of RAM Modules:</label>
           <select
             value={ramNumber}
-            onChange={(e) => setRamNumber(e.target.value)}
+            onChange={(e) => {
+              setRamNumber(Number(e.target.value));
+              updatePower();
+            }}
             className="p-2 border rounded"
           >
-            <option>Not Selected</option>
-            {data.ram.Number.map((n) => (
+            {data.ram.number.map((n) => (
               <option key={n} value={n}>
                 {n}
               </option>
@@ -171,13 +202,16 @@ const PowerSupply = () => {
           <label>Storage Type:</label>
           <select
             value={storageType}
-            onChange={(e) => setStorageType(e.target.value)}
+            onChange={(e) => {
+              setStorageType(e.target.value);
+              updatePower();
+            }}
             className="p-2 border rounded"
           >
             <option>Not Selected</option>
-            {data.storage.Type.map((s) => (
-              <option key={s} value={s}>
-                {s}
+            {data.storage.types.map((s) => (
+              <option key={s.name} value={s.name}>
+                {s.name}
               </option>
             ))}
           </select>
@@ -185,11 +219,13 @@ const PowerSupply = () => {
           <label>Number of Storage Devices:</label>
           <select
             value={storageNumber}
-            onChange={(e) => setStorageNumber(e.target.value)}
+            onChange={(e) => {
+              setStorageNumber(Number(e.target.value));
+              updatePower();
+            }}
             className="p-2 border rounded"
           >
-            <option>Not Selected</option>
-            {data.storage.Number.map((n) => (
+            {data.storage.number.map((n) => (
               <option key={n} value={n}>
                 {n}
               </option>
@@ -197,15 +233,15 @@ const PowerSupply = () => {
           </select>
 
           {/* Power Supply Recommendation */}
-          {powerSupply !== null && (
+          {totalPower > 0 && (
             <div className="mt-4 p-2 bg-gray-100 rounded">
-              <strong>Recommended Power Supply:</strong> {powerSupply}W
+              <strong>Total Recommended Power Supply:</strong> {totalPower}W
             </div>
           )}
         </div>
 
         <div className="mt-4 text-3xl font-bold flex justify-center items-center">
-          Total Power: <span>{powerSupply}</span>W
+          Total Power: <span>{totalPower}</span>W
         </div>
       </div>
     </div>
