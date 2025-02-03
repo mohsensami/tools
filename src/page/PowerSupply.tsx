@@ -48,108 +48,155 @@ const data = {
   },
 };
 
-const ramData = {
-  Module: ["DDR4", "DDR5"],
-  Number: [1, 2, 4],
-  PowerConsumption: {
-    DDR4: { 1: 5, 2: 10, 4: 20 },
-    DDR5: { 1: 6, 2: 12, 4: 24 },
-  },
-};
-
-const storageData = {
-  Type: ["SSD", "M.2", "HDD"],
-  Number: [1, 2, 4],
-  PowerConsumption: {
-    SSD: { 1: 3, 2: 6, 4: 12 },
-    "M.2": { 1: 5, 2: 10, 4: 20 },
-    HDD: { 1: 6, 2: 12, 4: 24 },
-  },
-};
-
 const PowerSupply = () => {
-  const [brand, setBrand] = useState("");
-  const [socket, setSocket] = useState("");
-  const [model, setModel] = useState("");
+  const [brand, setBrand] = useState("Not Selected");
+  const [socket, setSocket] = useState("Not Selected");
+  const [model, setModel] = useState("Not Selected");
+  const [ramType, setRamType] = useState("Not Selected");
+  const [ramNumber, setRamNumber] = useState("Not Selected");
+  const [storageType, setStorageType] = useState("Not Selected");
+  const [storageNumber, setStorageNumber] = useState("Not Selected");
   const [powerSupply, setPowerSupply] = useState(null);
 
   const handleBrandChange = (e) => {
     setBrand(e.target.value);
-    setSocket("");
-    setModel("");
+    setSocket("Not Selected");
+    setModel("Not Selected");
     setPowerSupply(null);
   };
 
   const handleSocketChange = (e) => {
     setSocket(e.target.value);
-    setModel("");
+    setModel("Not Selected");
     setPowerSupply(null);
   };
 
   const handleModelChange = (e) => {
     setModel(e.target.value);
-    const selectedModel = cpuData[brand][socket].models.find(
-      (m) => m.name === e.target.value
-    );
-    setPowerSupply(selectedModel ? selectedModel.power : null);
+    if (e.target.value !== "Not Selected") {
+      const selectedModel = data.cpu[brand][socket].models.find(
+        (m) => m.name === e.target.value
+      );
+      setPowerSupply(selectedModel ? selectedModel.power : null);
+    } else {
+      setPowerSupply(null);
+    }
   };
-
-  // const colorClass = getColorClassForPowerSupply(powerSupply);
 
   return (
     <div className="p-4 bg-gray-100 rounded-lg shadow-md w-full">
       <div className="grid grid-cols-2">
         <div className="p-4 space-y-4">
-          <label className="block">Select Brand:</label>
+          {/* CPU Section */}
+          <h2 className="text-lg font-semibold">Select CPU</h2>
+
+          <label>Brand:</label>
           <select
             value={brand}
             onChange={handleBrandChange}
             className="p-2 border rounded"
           >
-            <option value="">-- Select Brand --</option>
-            {Object.keys(cpuData).map((b) => (
+            <option>Not Selected</option>
+            {Object.keys(data.cpu).map((b) => (
               <option key={b} value={b}>
                 {b}
               </option>
             ))}
           </select>
 
-          {brand && (
-            <>
-              <label className="block">Select Socket:</label>
-              <select
-                value={socket}
-                onChange={handleSocketChange}
-                className="p-2 border rounded"
-              >
-                <option value="">-- Select Socket --</option>
-                {Object.keys(cpuData[brand]).map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </>
-          )}
+          <label>Socket:</label>
+          <select
+            value={socket}
+            onChange={handleSocketChange}
+            className="p-2 border rounded"
+          >
+            <option>Not Selected</option>
+            {brand !== "Not Selected" &&
+              Object.keys(data.cpu[brand]).map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+          </select>
 
-          {socket && (
-            <>
-              <label className="block">Select Model:</label>
-              <select
-                value={model}
-                onChange={handleModelChange}
-                className="p-2 border rounded"
-              >
-                <option value="">-- Select Model --</option>
-                {cpuData[brand][socket].models.map((m) => (
-                  <option key={m.name} value={m.name}>
-                    {m.name}
-                  </option>
-                ))}
-              </select>
-            </>
-          )}
+          <label>Model:</label>
+          <select
+            value={model}
+            onChange={handleModelChange}
+            className="p-2 border rounded"
+          >
+            <option>Not Selected</option>
+            {socket !== "Not Selected" &&
+              data.cpu[brand][socket].models.map((m) => (
+                <option key={m.name} value={m.name}>
+                  {m.name}
+                </option>
+              ))}
+          </select>
 
+          {/* RAM Section */}
+          <h2 className="text-lg font-semibold mt-4">Select RAM</h2>
+
+          <label>Memory Module:</label>
+          <select
+            value={ramType}
+            onChange={(e) => setRamType(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option>Not Selected</option>
+            {data.ram["Memory Module"].map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+
+          <label>Number of RAM Modules:</label>
+          <select
+            value={ramNumber}
+            onChange={(e) => setRamNumber(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option>Not Selected</option>
+            {data.ram.Number.map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+
+          {/* Storage Section */}
+          <h2 className="text-lg font-semibold mt-4">Select Storage</h2>
+
+          <label>Storage Type:</label>
+          <select
+            value={storageType}
+            onChange={(e) => setStorageType(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option>Not Selected</option>
+            {data.storage.Type.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+
+          <label>Number of Storage Devices:</label>
+          <select
+            value={storageNumber}
+            onChange={(e) => setStorageNumber(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option>Not Selected</option>
+            {data.storage.Number.map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+
+          {/* Power Supply Recommendation */}
           {powerSupply !== null && (
             <div className="mt-4 p-2 bg-gray-100 rounded">
               <strong>Recommended Power Supply:</strong> {powerSupply}W
