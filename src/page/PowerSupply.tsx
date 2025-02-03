@@ -1,5 +1,5 @@
 import { getColorClassForPowerSupply } from "@/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const data = {
   cpu: {
@@ -65,7 +65,7 @@ const PowerSupply = () => {
   const [storageNumber, setStorageNumber] = useState(1);
   const [totalPower, setTotalPower] = useState(0);
 
-  const updatePower = () => {
+  useEffect(() => {
     let power = 0;
 
     // CPU Power
@@ -95,7 +95,7 @@ const PowerSupply = () => {
     }
 
     setTotalPower(power);
-  };
+  }, [brand, socket, model, ramType, ramNumber, storageType, storageNumber]);
 
   return (
     <div className="p-4 bg-gray-100 rounded-lg shadow-md w-full">
@@ -111,7 +111,6 @@ const PowerSupply = () => {
               setBrand(e.target.value);
               setSocket("Not Selected");
               setModel("Not Selected");
-              updatePower();
             }}
             className="p-2 border rounded"
           >
@@ -129,7 +128,6 @@ const PowerSupply = () => {
             onChange={(e) => {
               setSocket(e.target.value);
               setModel("Not Selected");
-              updatePower();
             }}
             className="p-2 border rounded"
           >
@@ -145,10 +143,7 @@ const PowerSupply = () => {
           <label>Model:</label>
           <select
             value={model}
-            onChange={(e) => {
-              setModel(e.target.value);
-              updatePower();
-            }}
+            onChange={(e) => setModel(e.target.value)}
             className="p-2 border rounded"
           >
             <option>Not Selected</option>
@@ -166,10 +161,7 @@ const PowerSupply = () => {
           <label>Memory Module:</label>
           <select
             value={ramType}
-            onChange={(e) => {
-              setRamType(e.target.value);
-              updatePower();
-            }}
+            onChange={(e) => setRamType(e.target.value)}
             className="p-2 border rounded"
           >
             <option>Not Selected</option>
@@ -183,10 +175,7 @@ const PowerSupply = () => {
           <label>Number of RAM Modules:</label>
           <select
             value={ramNumber}
-            onChange={(e) => {
-              setRamNumber(Number(e.target.value));
-              updatePower();
-            }}
+            onChange={(e) => setRamNumber(Number(e.target.value))}
             className="p-2 border rounded"
           >
             {data.ram.number.map((n) => (
@@ -202,10 +191,7 @@ const PowerSupply = () => {
           <label>Storage Type:</label>
           <select
             value={storageType}
-            onChange={(e) => {
-              setStorageType(e.target.value);
-              updatePower();
-            }}
+            onChange={(e) => setStorageType(e.target.value)}
             className="p-2 border rounded"
           >
             <option>Not Selected</option>
@@ -219,10 +205,7 @@ const PowerSupply = () => {
           <label>Number of Storage Devices:</label>
           <select
             value={storageNumber}
-            onChange={(e) => {
-              setStorageNumber(Number(e.target.value));
-              updatePower();
-            }}
+            onChange={(e) => setStorageNumber(Number(e.target.value))}
             className="p-2 border rounded"
           >
             {data.storage.number.map((n) => (
