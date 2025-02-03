@@ -1,3 +1,4 @@
+import { getColorClassForPowerSupply } from "@/utils";
 import { useState } from "react";
 
 const cpuData = {
@@ -70,6 +71,8 @@ const PowerSupply = () => {
     (storageType && storageNumber
       ? storageData.PowerConsumption[storageType][storageNumber]
       : 0);
+
+  const colorClass = getColorClassForPowerSupply(totalPower);
 
   return (
     <div className="p-4 bg-gray-100 rounded-lg shadow-md w-full">
@@ -179,7 +182,7 @@ const PowerSupply = () => {
         </div>
 
         <div className="mt-4 text-3xl font-bold flex justify-center items-center">
-          Total Power: {totalPower}W
+          Total Power: <span className={colorClass}>{totalPower}</span>W
         </div>
       </div>
     </div>
