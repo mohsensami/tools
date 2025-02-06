@@ -39,6 +39,7 @@ const Movies = () => {
         queryFn: getTrendingMovies,
         staleTime: 600000,
     });
+
     useEffect(() => {
         trendingMovies.refetch();
     }, [endpoint]);
