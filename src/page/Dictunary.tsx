@@ -37,34 +37,36 @@ const Dictunary = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {dictionaryResults.data.map((entry, index) => (
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 lg:grid-cols-1">
+      {dictionaryResults.data.map((entry: any, index: any) => (
         <Card
           key={index}
           className="p-4 shadow-lg rounded-2xl border border-gray-200"
         >
           <CardContent>
             <h2 className="text-xl font-bold capitalize mb-2">{entry.word}</h2>
-            {entry.phonetics.map((phonetic, idx) => (
-              <div
-                key={idx}
-                className="flex items-center gap-2 text-gray-600 text-sm"
-              >
-                <span>{phonetic.text}</span>
-                {phonetic.audio && (
-                  <audio controls className="h-6">
-                    <source src={phonetic.audio} type="audio/mpeg" />
-                  </audio>
-                )}
-              </div>
-            ))}
+            <div className="flex flex-col gap-4">
+              {entry.phonetics.map((phonetic: any, idx: any) => (
+                <div
+                  key={idx}
+                  className="flex flex-cols items-center gap-4 text-gray-600 text-sm"
+                >
+                  <span>{phonetic.text}</span>
+                  {phonetic.audio && (
+                    <audio controls className="h-6">
+                      <source src={phonetic.audio} type="audio/mpeg" />
+                    </audio>
+                  )}
+                </div>
+              ))}
+            </div>
             <div className="mt-2">
-              {entry.meanings.map((meaning, idx) => (
+              {entry.meanings.map((meaning: any, idx: any) => (
                 <div key={idx} className="mb-3">
                   <h3 className="text-md font-semibold capitalize text-gray-700">
                     {meaning.partOfSpeech}
                   </h3>
-                  {meaning.definitions.map((def, defIdx) => (
+                  {meaning.definitions.map((def: any, defIdx: any) => (
                     <p key={defIdx} className="text-gray-600 text-sm mb-1">
                       - {def.definition}
                     </p>
@@ -73,7 +75,7 @@ const Dictunary = () => {
               ))}
             </div>
             <div className="text-sm text-blue-500 underline mt-2">
-              {entry.sourceUrls.map((url, urlIdx) => (
+              {entry.sourceUrls.map((url: any, urlIdx: any) => (
                 <a
                   key={urlIdx}
                   href={url}
