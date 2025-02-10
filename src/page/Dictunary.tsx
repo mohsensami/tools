@@ -3,13 +3,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Dictunary = () => {
   const [query, setQuery] = useState("");
 
   const getDictionaryData = async () => {
     const { data } = await axios(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/hi`
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${query}`
     );
     return data;
   };
@@ -17,7 +19,7 @@ const Dictunary = () => {
   const dictionaryResults = useQuery({
     queryKey: ["get-dictionary"],
     queryFn: getDictionaryData,
-    // enabled: false,
+    enabled: false,
     // staleTime: 600000,
   });
   useEffect(() => {
@@ -33,7 +35,24 @@ const Dictunary = () => {
   }
 
   if (!dictionaryResults.data) {
-    return <div className="text-center text-red-500">No data available.</div>;
+    return (
+      <div>
+        <Card className="p-4 shadow-lg rounded-2xl border border-gray-200">
+          <CardContent>
+            <form>
+              <div className="flex gap-2 items-center">
+                <Input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+                <Button>Search</Button>
+              </div>
+            </form>
+            <p className="py-4">No data available.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
