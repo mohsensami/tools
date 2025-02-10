@@ -26,6 +26,11 @@ const Dictunary = () => {
     console.log(dictionaryResults?.data);
   }, []);
 
+  const handleSearch = (e: any) => {
+    e.preventDefault();
+    dictionaryResults.refetch();
+  };
+
   if (dictionaryResults.isLoading || dictionaryResults.isFetching) {
     return (
       <div className="flex justify-center items-center h-40">
@@ -39,13 +44,19 @@ const Dictunary = () => {
       <div>
         <Card className="p-4 shadow-lg rounded-2xl border border-gray-200">
           <CardContent>
-            <form>
+            <form onSubmit={handleSearch}>
               <div className="flex gap-2 items-center">
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
-                <Button>Search</Button>
+                <Button
+                  disabled={
+                    dictionaryResults.isLoading || dictionaryResults.isFetching
+                  }
+                >
+                  Search
+                </Button>
               </div>
             </form>
             <p className="py-4">No data available.</p>
