@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const Dictunary = () => {
+const Dictionary = () => {
   const [query, setQuery] = useState("");
 
   const getDictionaryData = async () => {
@@ -124,4 +124,4 @@ const Dictunary = () => {
   );
 };
 
-export default Dictunary;
+export default Dictionary;
