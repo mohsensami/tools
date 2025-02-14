@@ -24,8 +24,8 @@ function App() {
             <Route path="/weather" element={<Weather />} />
             <Route path="/dictionary" element={<Dictionary />} />
             <Route path="/times" element={<WorldTimes />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
-          <Route path="*" element={<NotFound />} />
         </Routes>
       </QueryClientProvider>
     </div>
