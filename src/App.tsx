@@ -10,6 +10,7 @@ import Weather from "./page/Weather";
 import Dictionary from "./page/Dictionary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WorldTimes from "./page/WorldTimes";
+import Movie from "./page/movies/Movie";
 
 function App() {
   const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ function App() {
           <Route element={<PageLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/movies" element={<Movies />} />
+            <Route path="/movie/:id" element={<Movie />} />
             <Route path="/power-supply-calculator" element={<PowerSupply />} />
             <Route path="/weather" element={<Weather />} />
             <Route path="/dictionary" element={<Dictionary />} />
