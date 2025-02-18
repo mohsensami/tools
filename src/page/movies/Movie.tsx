@@ -1,7 +1,7 @@
 import { fetchDataFromApi } from "@/services/moviesService";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const Movie = () => {
   const params = useParams();
@@ -99,7 +99,9 @@ const Movie = () => {
                 />
                 <div className="absolute inset-0 bg-black opacity-50"></div>
                 <div className="relative container mx-auto p-4">
-                  <h1 className="text-4xl font-bold">{similar?.title}</h1>
+                  <h1 className="text-4xl font-bold">
+                    <Link to={`/movie/${similar?.id}`}>{similar?.title}</Link>
+                  </h1>
                   <h2 className="text-xl italic">{similar?.tagline}</h2>
                 </div>
               </div>
