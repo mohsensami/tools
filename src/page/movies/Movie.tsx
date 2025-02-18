@@ -20,7 +20,7 @@ const Movie = () => {
 
   const getSimilarMovies = async () => {
     const data = await fetchDataFromApi(`/movie/${params.id}/similar`, "");
-    return data.results[0];
+    return data.results;
   };
   const similarMovies = useQuery({
     queryKey: ["similar-movies", params.id],
@@ -87,52 +87,52 @@ const Movie = () => {
           ))}
         </div>
       </div>
-      <div>
-        <div className="bg-gray-900 text-white">
-          <div className="relative">
-            <img
-              src={`https://image.tmdb.org/t/p/original/${similarMovies?.data?.backdrop_path}`}
-              alt={similarMovies?.data?.title}
-              className="w-full h-64 object-cover"
-            />
-            <div className="absolute inset-0 bg-black opacity-50"></div>
-            <div className="relative container mx-auto p-4">
-              <h1 className="text-4xl font-bold">
-                {similarMovies?.data?.title}
-              </h1>
-              <h2 className="text-xl italic">{similarMovies?.data?.tagline}</h2>
-            </div>
-          </div>
-          <div className="container mx-auto p-4">
-            <div className="flex flex-col md:flex-row">
-              <img
-                src={`https://image.tmdb.org/t/p/original${similarMovies?.data?.poster_path}`}
-                alt={similarMovies?.data?.title}
-                className="w-1/3 md:w-1/4 rounded-lg shadow-lg"
-              />
-              <div className="md:ml-4">
-                <p className="mt-2">
-                  Release Date: {similarMovies?.data?.release_date}
-                </p>
-                <p>Runtime: {similarMovies?.data?.runtime} minutes</p>
-                {/* <p>Genres: {similarMovies?.data?.genres.join(", ")}</p> */}
-                <p>
-                  Rating: {similarMovies?.data?.vote_average} (
-                  {similarMovies?.data?.vote_count} votes)
-                </p>
-                <a
-                  href={similarMovies?.data?.homepage}
-                  className="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Visit Official Site
-                </a>
+      <div className="container mx-auto p-4 grid grid-cols-4 gap-4">
+        {similarMovies?.data?.map((similar: any) => {
+          return (
+            <div className="bg-gray-900 text-white">
+              <div className="relative">
+                <img
+                  src={`https://image.tmdb.org/t/p/original/${similar?.backdrop_path}`}
+                  alt={similar?.title}
+                  className="w-full h-64 object-cover"
+                />
+                <div className="absolute inset-0 bg-black opacity-50"></div>
+                <div className="relative container mx-auto p-4">
+                  <h1 className="text-4xl font-bold">{similar?.title}</h1>
+                  <h2 className="text-xl italic">{similar?.tagline}</h2>
+                </div>
               </div>
-            </div>
-            <h3 className="mt-4 text-2xl">Overview</h3>
-            <p className="mt-2">{similarMovies?.data?.overview}</p>
-            <h3 className="mt-4 text-xl">Production Companies</h3>
-            <div className="flex flex-wrap mt-2">
-              {/* {similarMovies?.data?.production_companies.map(
+              <div className="container mx-auto p-4">
+                <div className="flex flex-col md:flex-row">
+                  <img
+                    src={`https://image.tmdb.org/t/p/original${similar?.poster_path}`}
+                    alt={similar?.title}
+                    className="w-1/3 md:w-1/4 rounded-lg shadow-lg"
+                  />
+                  <div className="md:ml-4">
+                    <p className="mt-2">
+                      Release Date: {similar?.release_date}
+                    </p>
+                    <p>Runtime: {similar?.runtime} minutes</p>
+                    {/* <p>Genres: {similar?.genres.join(", ")}</p> */}
+                    <p>
+                      Rating: {similar?.vote_average} ({similar?.vote_count}{" "}
+                      votes)
+                    </p>
+                    <a
+                      href={similar?.homepage}
+                      className="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Visit Official Site
+                    </a>
+                  </div>
+                </div>
+                <h3 className="mt-4 text-2xl">Overview</h3>
+                <p className="mt-2">{similar?.overview}</p>
+                <h3 className="mt-4 text-xl">Production Companies</h3>
+                <div className="flex flex-wrap mt-2">
+                  {/* {similar?.production_companies.map(
                 (company, index) => (
                   <div key={index} className="flex items-center mr-4">
                     <img
@@ -144,14 +144,14 @@ const Movie = () => {
                   </div>
                 )
               )} */}
-            </div>
-          </div>
+                </div>
+              </div>
 
-          {/* Similar Movies Section */}
-          <div className="container mx-auto p-4">
-            <h3 className="mt-8 text-2xl">Similar Movies</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-              {/* {similarMovies?.data?.similarMovies.map((similarMovie, index) => (
+              {/* Similar Movies Section */}
+              <div className="container mx-auto p-4">
+                <h3 className="mt-8 text-2xl">Similar Movies</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                  {/* {similar?.similarMovies.map((similarMovie, index) => (
                 <div
                   key={index}
                   className="bg-gray-800 rounded-lg overflow-hidden shadow-lg"
@@ -169,9 +169,11 @@ const Movie = () => {
                   </div>
                 </div>
               ))} */}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          );
+        })}
       </div>
     </div>
   );
