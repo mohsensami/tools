@@ -1,17 +1,21 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-export default function QrCode() {
+export function QrCode() {
   const [data, setData] = useState("Example");
   const [size, setSize] = useState("150x150");
-  const [qrSrc, setQrSrc] = useState("");
 
-  const generateQRCode = () => {
-    setQrSrc(
-      `https://api.qrserver.com/v1/create-qr-code/?size=${size}&data=${encodeURIComponent(
-        data
-      )}`
-    );
+  const fetchQRCode = async () => {
+    return `https://api.qrserver.com/v1/create-qr-code/?size=${size}&data=${encodeURIComponent(
+      data
+    )}`;
   };
+
+  const { data: qrSrc, refetch } = useQuery({
+    queryKey: ["qrCode", data, size],
+    queryFn: fetchQRCode,
+    enabled: false,
+  });
 
   return (
     <div className="flex flex-col items-center p-6 bg-gray-100 min-h-screen">
@@ -34,7 +38,7 @@ export default function QrCode() {
         <option value="300x300">300x300</option>
       </select>
       <button
-        onClick={generateQRCode}
+        onClick={() => refetch()}
         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
         Generate QR Code
