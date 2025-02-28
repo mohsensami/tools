@@ -7,6 +7,7 @@ const menu = [
   { name: "PowerSupply", icon: "Power", link: "/power-supply-calculator" },
   { name: "weather", icon: "weather", link: "/weather" },
   { name: "dictionary", icon: "dictionary", link: "/dictionary" },
+  { name: "qr-code", icon: "qr-code", link: "/qr-code" },
   { name: "times", icon: "times", link: "/times" },
 ];
 
