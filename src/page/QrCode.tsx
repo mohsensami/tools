@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import Spinner from "@/components/Spinner";
 
 export function QrCode() {
   const [data, setData] = useState("Example");
@@ -11,8 +12,13 @@ export function QrCode() {
     )}`;
   };
 
-  const { data: qrSrc, refetch } = useQuery({
-    queryKey: ["qrCode", data, size],
+  const {
+    data: qrSrc,
+    refetch,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ["qr-code", data, size],
     queryFn: fetchQRCode,
     enabled: false,
   });
@@ -43,7 +49,15 @@ export function QrCode() {
       >
         Generate QR Code
       </button>
-      {qrSrc && <img src={qrSrc} alt="QR Code" className="mt-4 border p-2" />}
+      {isLoading || isFetching ? (
+        <div className="mt-8">
+          <Spinner />
+        </div>
+      ) : qrSrc ? (
+        <img src={qrSrc} alt="QR Code" className="mt-4 border p-2" />
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
