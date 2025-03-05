@@ -42,6 +42,7 @@ export function QrCode() {
         <option value="200x200">200x200</option>
         <option value="250x250">250x250</option>
         <option value="300x300">300x300</option>
+        <option value="450x450">450x450</option>
       </select>
       <button
         onClick={() => refetch()}
