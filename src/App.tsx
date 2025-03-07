@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WorldTimes from "./page/WorldTimes";
 import Movie from "./page/movies/Movie";
 import { QrCode } from "./page/QrCode";
+import DeepSeek from "./page/DeepSeek";
 
 function App() {
   const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ function App() {
             <Route path="/dictionary" element={<Dictionary />} />
             <Route path="/times" element={<WorldTimes />} />
             <Route path="/qr-code" element={<QrCode />} />
+            <Route path="/deepseek" element={<DeepSeek />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
