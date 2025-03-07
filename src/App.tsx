@@ -13,6 +13,7 @@ import WorldTimes from "./page/WorldTimes";
 import Movie from "./page/movies/Movie";
 import { QrCode } from "./page/QrCode";
 import DeepSeek from "./page/DeepSeek";
+import ChatGpt from "./page/ChatGpt";
 
 function App() {
   const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ function App() {
             <Route path="/times" element={<WorldTimes />} />
             <Route path="/qr-code" element={<QrCode />} />
             <Route path="/deepseek" element={<DeepSeek />} />
+            <Route path="/chatgpt" element={<ChatGpt />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
