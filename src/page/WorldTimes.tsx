@@ -7,27 +7,75 @@ interface TimeZone {
   country_code: string;
 }
 
+interface ZoneInfo {
+  timezone: string;
+  name: string;
+}
+
 const WorldTimes = () => {
   const [selectedTime, setSelectedTime] = useState<TimeZone | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedZone, setSelectedZone] = useState("Asia/Tehran");
+  const [availableZones, setAvailableZones] = useState<ZoneInfo[]>([]);
+  const [loadingZones, setLoadingZones] = useState(true);
 
-  const timeZones = [
-    { timezone: "Asia/Tehran", name: "Iran" },
-    { timezone: "America/New_York", name: "New York" },
-    { timezone: "Europe/London", name: "London" },
-    { timezone: "Asia/Tokyo", name: "Tokyo" },
-    { timezone: "Asia/Dubai", name: "Dubai" },
-    { timezone: "Europe/Paris", name: "Paris" },
-    { timezone: "Asia/Shanghai", name: "Shanghai" },
-    { timezone: "Australia/Sydney", name: "Sydney" },
-    { timezone: "Pacific/Auckland", name: "Auckland" },
-    { timezone: "Asia/Singapore", name: "Singapore" },
-    { timezone: "Europe/Berlin", name: "Berlin" },
-    { timezone: "America/Los_Angeles", name: "Los Angeles" },
-    { timezone: "Asia/Seoul", name: "Seoul" },
-  ];
+  // Fetch all available time zones
+  const fetchAvailableZones = async () => {
+    setLoadingZones(true);
+    try {
+      // First, try TimeAPI's zones endpoint
+      const response = await axios.get(
+        "https://timeapi.io/api/TimeZone/AvailableTimeZones"
+      );
+
+      if (response.data) {
+        // Transform the data into our format
+        const zones = response.data.map((zone: string) => ({
+          timezone: zone,
+          name: zone.split("/").pop()?.replace("_", " ") || zone,
+        }));
+
+        // Sort zones by name
+        zones.sort((a: ZoneInfo, b: ZoneInfo) => a.name.localeCompare(b.name));
+
+        // Make sure Iran is at the top
+        const iranIndex = zones.findIndex(
+          (zone) => zone.timezone === "Asia/Tehran"
+        );
+        if (iranIndex !== -1) {
+          const iranZone = zones.splice(iranIndex, 1)[0];
+          zones.unshift(iranZone);
+        }
+
+        setAvailableZones(zones);
+      }
+    } catch (err) {
+      console.error("Error fetching time zones:", err);
+      // Fallback to our static list if API fails
+      setAvailableZones([
+        { timezone: "Asia/Tehran", name: "Iran" },
+        { timezone: "America/New_York", name: "New York" },
+        { timezone: "Europe/London", name: "London" },
+        { timezone: "Asia/Tokyo", name: "Tokyo" },
+        { timezone: "Asia/Dubai", name: "Dubai" },
+        { timezone: "Europe/Paris", name: "Paris" },
+        { timezone: "Asia/Shanghai", name: "Shanghai" },
+        { timezone: "Australia/Sydney", name: "Sydney" },
+        { timezone: "Pacific/Auckland", name: "Auckland" },
+        { timezone: "Asia/Singapore", name: "Singapore" },
+        { timezone: "Europe/Berlin", name: "Berlin" },
+        { timezone: "America/Los_Angeles", name: "Los Angeles" },
+        { timezone: "Asia/Seoul", name: "Seoul" },
+      ]);
+    } finally {
+      setLoadingZones(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAvailableZones();
+  }, []);
 
   const fetchTime = async (zone: string) => {
     setLoading(true);
@@ -36,7 +84,9 @@ const WorldTimes = () => {
       const response = await axios.get(
         `https://timeapi.io/api/Time/current/zone?timeZone=${zone}`
       );
-      const selectedZoneInfo = timeZones.find((tz) => tz.timezone === zone);
+      const selectedZoneInfo = availableZones.find(
+        (tz) => tz.timezone === zone
+      );
       setSelectedTime({
         timezone: zone,
         datetime: response.data.dateTime,
@@ -51,10 +101,12 @@ const WorldTimes = () => {
   };
 
   useEffect(() => {
-    fetchTime(selectedZone);
-    const interval = setInterval(() => fetchTime(selectedZone), 60000);
-    return () => clearInterval(interval);
-  }, [selectedZone]);
+    if (!loadingZones) {
+      fetchTime(selectedZone);
+      const interval = setInterval(() => fetchTime(selectedZone), 60000);
+      return () => clearInterval(interval);
+    }
+  }, [selectedZone, loadingZones]);
 
   const handleZoneChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedZone(event.target.value);
@@ -98,40 +150,47 @@ const WorldTimes = () => {
         <select
           value={selectedZone}
           onChange={handleZoneChange}
+          disabled={loadingZones}
           style={{
             padding: "12px",
             fontSize: "16px",
             borderRadius: "8px",
             border: "1px solid #ddd",
-            width: "200px",
-            cursor: "pointer",
+            width: "250px",
+            cursor: loadingZones ? "wait" : "pointer",
+            opacity: loadingZones ? 0.7 : 1,
           }}
         >
-          {timeZones.map((zone) => (
-            <option key={zone.timezone} value={zone.timezone}>
-              {zone.name}
-            </option>
-          ))}
+          {loadingZones ? (
+            <option>Loading time zones...</option>
+          ) : (
+            availableZones.map((zone) => (
+              <option key={zone.timezone} value={zone.timezone}>
+                {zone.name}
+              </option>
+            ))
+          )}
         </select>
 
         <button
           onClick={() => fetchTime(selectedZone)}
+          disabled={loading || loadingZones}
           style={{
             padding: "12px 20px",
-            backgroundColor: "#3498db",
+            backgroundColor: loading || loadingZones ? "#bdc3c7" : "#3498db",
             color: "white",
             border: "none",
             borderRadius: "8px",
-            cursor: "pointer",
+            cursor: loading || loadingZones ? "not-allowed" : "pointer",
             fontSize: "16px",
             transition: "background-color 0.2s",
           }}
         >
-          Refresh
+          {loading ? "Refreshing..." : "Refresh"}
         </button>
       </div>
 
-      {loading && (
+      {(loading || loadingZones) && (
         <div style={{ textAlign: "center", padding: "20px" }}>
           Loading time...
         </div>
@@ -152,7 +211,7 @@ const WorldTimes = () => {
         </div>
       )}
 
-      {selectedTime && !loading && !error && (
+      {selectedTime && !loading && !loadingZones && !error && (
         <div
           style={{
             textAlign: "center",
