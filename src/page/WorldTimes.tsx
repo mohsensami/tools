@@ -24,24 +24,20 @@ const WorldTimes = () => {
   const fetchAvailableZones = async () => {
     setLoadingZones(true);
     try {
-      // First, try TimeAPI's zones endpoint
       const response = await axios.get(
         "https://timeapi.io/api/TimeZone/AvailableTimeZones"
       );
 
       if (response.data) {
-        // Transform the data into our format
         const zones = response.data.map((zone: string) => ({
           timezone: zone,
           name: zone.split("/").pop()?.replace("_", " ") || zone,
         }));
 
-        // Sort zones by name
         zones.sort((a: ZoneInfo, b: ZoneInfo) => a.name.localeCompare(b.name));
 
-        // Make sure Iran is at the top
         const iranIndex = zones.findIndex(
-          (zone) => zone.timezone === "Asia/Tehran"
+          (zone: ZoneInfo) => zone.timezone === "Asia/Tehran"
         );
         if (iranIndex !== -1) {
           const iranZone = zones.splice(iranIndex, 1)[0];
@@ -52,7 +48,6 @@ const WorldTimes = () => {
       }
     } catch (err) {
       console.error("Error fetching time zones:", err);
-      // Fallback to our static list if API fails
       setAvailableZones([
         { timezone: "Asia/Tehran", name: "Iran" },
         { timezone: "America/New_York", name: "New York" },
@@ -124,42 +119,19 @@ const WorldTimes = () => {
   };
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        maxWidth: "600px",
-        margin: "40px auto",
-        backgroundColor: "white",
-        borderRadius: "15px",
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <h1 style={{ textAlign: "center", marginBottom: "30px", color: "#333" }}>
-        World Time
-      </h1>
+    <div className="p-5 max-w-2xl mx-auto mt-10 bg-white rounded-2xl shadow-md">
+      <h1 className="text-center mb-8 text-3xl text-gray-700">World Time</h1>
 
-      <div
-        style={{
-          marginBottom: "30px",
-          display: "flex",
-          gap: "10px",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <div className="mb-8 flex gap-3 items-center justify-center">
         <select
           value={selectedZone}
           onChange={handleZoneChange}
           disabled={loadingZones}
-          style={{
-            padding: "12px",
-            fontSize: "16px",
-            borderRadius: "8px",
-            border: "1px solid #ddd",
-            width: "250px",
-            cursor: loadingZones ? "wait" : "pointer",
-            opacity: loadingZones ? 0.7 : 1,
-          }}
+          className={`
+            p-3 text-base rounded-lg border border-gray-300 w-64
+            ${loadingZones ? "cursor-wait opacity-70" : "cursor-pointer"}
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+          `}
         >
           {loadingZones ? (
             <option>Loading time zones...</option>
@@ -175,67 +147,36 @@ const WorldTimes = () => {
         <button
           onClick={() => fetchTime(selectedZone)}
           disabled={loading || loadingZones}
-          style={{
-            padding: "12px 20px",
-            backgroundColor: loading || loadingZones ? "#bdc3c7" : "#3498db",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            cursor: loading || loadingZones ? "not-allowed" : "pointer",
-            fontSize: "16px",
-            transition: "background-color 0.2s",
-          }}
+          className={`
+            px-5 py-3 rounded-lg text-white text-base transition-colors
+            ${
+              loading || loadingZones
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-600 cursor-pointer"
+            }
+          `}
         >
           {loading ? "Refreshing..." : "Refresh"}
         </button>
       </div>
 
       {(loading || loadingZones) && (
-        <div style={{ textAlign: "center", padding: "20px" }}>
-          Loading time...
-        </div>
+        <div className="text-center py-5">Loading time...</div>
       )}
 
       {error && (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "20px",
-            color: "red",
-            backgroundColor: "#fff3f3",
-            borderRadius: "8px",
-            marginBottom: "20px",
-          }}
-        >
+        <div className="text-center p-5 text-red-600 bg-red-50 rounded-lg mb-5">
           {error}
         </div>
       )}
 
       {selectedTime && !loading && !loadingZones && !error && (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "30px",
-            backgroundColor: "#f8f9fa",
-            borderRadius: "12px",
-          }}
-        >
-          <h2 style={{ color: "#2c3e50", marginBottom: "15px" }}>
+        <div className="text-center p-8 bg-gray-50 rounded-xl">
+          <h2 className="text-gray-800 mb-4 text-2xl">
             {selectedTime.country_code}
           </h2>
-          <p
-            style={{ color: "#7f8c8d", fontSize: "14px", marginBottom: "10px" }}
-          >
-            {selectedTime.timezone}
-          </p>
-          <p
-            style={{
-              color: "#2c3e50",
-              fontSize: "24px",
-              fontWeight: "bold",
-              margin: "0",
-            }}
-          >
+          <p className="text-gray-500 text-sm mb-3">{selectedTime.timezone}</p>
+          <p className="text-gray-800 text-2xl font-bold">
             {formatTime(selectedTime.datetime)}
           </p>
         </div>
