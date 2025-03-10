@@ -8,55 +8,57 @@ interface TimeZone {
 }
 
 const WorldTimes = () => {
-  const [timeZones, setTimeZones] = useState<TimeZone[]>([]);
+  const [selectedTime, setSelectedTime] = useState<TimeZone | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedZone, setSelectedZone] = useState("Asia/Tehran");
 
-  // Popular time zones to display
-  const popularTimeZones = [
-    "America/New_York",
-    "Europe/London",
-    "Asia/Tokyo",
-    "Asia/Dubai",
-    "Europe/Paris",
-    "Asia/Shanghai",
-    "Australia/Sydney",
-    "Pacific/Auckland",
-    "Asia/Singapore",
-    "Europe/Berlin",
-    "America/Los_Angeles",
-    "Asia/Seoul",
+  const timeZones = [
+    { timezone: "Asia/Tehran", name: "Iran" },
+    { timezone: "America/New_York", name: "New York" },
+    { timezone: "Europe/London", name: "London" },
+    { timezone: "Asia/Tokyo", name: "Tokyo" },
+    { timezone: "Asia/Dubai", name: "Dubai" },
+    { timezone: "Europe/Paris", name: "Paris" },
+    { timezone: "Asia/Shanghai", name: "Shanghai" },
+    { timezone: "Australia/Sydney", name: "Sydney" },
+    { timezone: "Pacific/Auckland", name: "Auckland" },
+    { timezone: "Asia/Singapore", name: "Singapore" },
+    { timezone: "Europe/Berlin", name: "Berlin" },
+    { timezone: "America/Los_Angeles", name: "Los Angeles" },
+    { timezone: "Asia/Seoul", name: "Seoul" },
   ];
 
-  const fetchTimeZones = async () => {
+  const fetchTime = async (zone: string) => {
     setLoading(true);
     setError("");
     try {
-      const requests = popularTimeZones.map((zone) =>
-        axios.get(`http://worldtimeapi.org/api/timezone/${zone}`)
+      const response = await axios.get(
+        `https://timeapi.io/api/Time/current/zone?timeZone=${zone}`
       );
-      const responses = await Promise.all(requests);
-      const times = responses.map((res) => ({
-        timezone: res.data.timezone,
-        datetime: res.data.datetime,
-        country_code: res.data.timezone.split("/")[1].replace("_", " "),
-      }));
-      setTimeZones(times);
+      const selectedZoneInfo = timeZones.find((tz) => tz.timezone === zone);
+      setSelectedTime({
+        timezone: zone,
+        datetime: response.data.dateTime,
+        country_code: selectedZoneInfo?.name || zone,
+      });
     } catch (err) {
-      setError("Failed to fetch time zones. Please try again later.");
-      console.error("Error fetching time zones:", err);
+      setError("Failed to fetch time. Please try again later.");
+      console.error("Error fetching time:", err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchTimeZones();
-    // Refresh times every minute
-    const interval = setInterval(fetchTimeZones, 60000);
+    fetchTime(selectedZone);
+    const interval = setInterval(() => fetchTime(selectedZone), 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedZone]);
+
+  const handleZoneChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedZone(event.target.value);
+  };
 
   const formatTime = (datetime: string) => {
     return new Date(datetime).toLocaleString("en-US", {
@@ -65,38 +67,73 @@ const WorldTimes = () => {
       hour12: true,
       month: "short",
       day: "numeric",
+      weekday: "long",
     });
   };
 
-  const filteredTimeZones = timeZones.filter((tz) =>
-    tz.country_code.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
+    <div
+      style={{
+        padding: "20px",
+        maxWidth: "600px",
+        margin: "40px auto",
+        backgroundColor: "white",
+        borderRadius: "15px",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      }}
+    >
       <h1 style={{ textAlign: "center", marginBottom: "30px", color: "#333" }}>
-        World Time Zones
+        World Time
       </h1>
 
-      <div style={{ marginBottom: "20px" }}>
-        <input
-          type="text"
-          placeholder="Search by city..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+      <div
+        style={{
+          marginBottom: "30px",
+          display: "flex",
+          gap: "10px",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <select
+          value={selectedZone}
+          onChange={handleZoneChange}
           style={{
-            width: "100%",
-            padding: "10px",
+            padding: "12px",
             fontSize: "16px",
             borderRadius: "8px",
             border: "1px solid #ddd",
+            width: "200px",
+            cursor: "pointer",
           }}
-        />
+        >
+          {timeZones.map((zone) => (
+            <option key={zone.timezone} value={zone.timezone}>
+              {zone.name}
+            </option>
+          ))}
+        </select>
+
+        <button
+          onClick={() => fetchTime(selectedZone)}
+          style={{
+            padding: "12px 20px",
+            backgroundColor: "#3498db",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer",
+            fontSize: "16px",
+            transition: "background-color 0.2s",
+          }}
+        >
+          Refresh
+        </button>
       </div>
 
       {loading && (
         <div style={{ textAlign: "center", padding: "20px" }}>
-          Loading time zones...
+          Loading time...
         </div>
       )}
 
@@ -108,70 +145,42 @@ const WorldTimes = () => {
             color: "red",
             backgroundColor: "#fff3f3",
             borderRadius: "8px",
+            marginBottom: "20px",
           }}
         >
           {error}
         </div>
       )}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-          gap: "20px",
-          padding: "20px 0",
-        }}
-      >
-        {filteredTimeZones.map((tz, index) => (
-          <div
-            key={index}
+      {selectedTime && !loading && !error && (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "30px",
+            backgroundColor: "#f8f9fa",
+            borderRadius: "12px",
+          }}
+        >
+          <h2 style={{ color: "#2c3e50", marginBottom: "15px" }}>
+            {selectedTime.country_code}
+          </h2>
+          <p
+            style={{ color: "#7f8c8d", fontSize: "14px", marginBottom: "10px" }}
+          >
+            {selectedTime.timezone}
+          </p>
+          <p
             style={{
-              backgroundColor: "white",
-              borderRadius: "12px",
-              padding: "20px",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              transition: "transform 0.2s",
-              cursor: "pointer",
-              transform: searchTerm ? "translateY(-5px)" : "none",
+              color: "#2c3e50",
+              fontSize: "24px",
+              fontWeight: "bold",
+              margin: "0",
             }}
           >
-            <h3 style={{ margin: "0 0 10px 0", color: "#2c3e50" }}>
-              {tz.country_code}
-            </h3>
-            <p style={{ margin: "0", color: "#7f8c8d", fontSize: "14px" }}>
-              {tz.timezone}
-            </p>
-            <p
-              style={{
-                margin: "10px 0 0 0",
-                color: "#2c3e50",
-                fontSize: "18px",
-                fontWeight: "bold",
-              }}
-            >
-              {formatTime(tz.datetime)}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <button
-        onClick={fetchTimeZones}
-        style={{
-          display: "block",
-          margin: "20px auto",
-          padding: "10px 20px",
-          backgroundColor: "#3498db",
-          color: "white",
-          border: "none",
-          borderRadius: "8px",
-          cursor: "pointer",
-          fontSize: "16px",
-          transition: "background-color 0.2s",
-        }}
-      >
-        Refresh Times
-      </button>
+            {formatTime(selectedTime.datetime)}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
