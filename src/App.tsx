@@ -14,6 +14,7 @@ import Movie from "./page/movies/Movie";
 import { QrCode } from "./page/QrCode";
 import DeepSeek from "./page/DeepSeek";
 import ChatGpt from "./page/ChatGpt";
+import News from "./page/News";
 
 function App() {
   const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ function App() {
             <Route path="/qr-code" element={<QrCode />} />
             <Route path="/deepseek" element={<DeepSeek />} />
             <Route path="/chatgpt" element={<ChatGpt />} />
+            <Route path="/news" element={<News />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
