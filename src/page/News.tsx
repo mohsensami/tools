@@ -22,7 +22,9 @@ const News = () => {
       try {
         // You need to replace 'YOUR_API_KEY' with your actual NewsAPI key
         const response = await axios.get(
-          `https://newsapi.org/v2/top-headlines?country=us&apiKey=YOUR_API_KEY`
+          `https://newsapi.org/v2/top-headlines?country=us&apiKey=${
+            import.meta.env.VITE_APP_NEWS_API_KEY
+          }`
         );
         setArticles(response.data.articles);
         setLoading(false);
