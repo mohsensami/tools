@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useState } from "react";
 
 interface CoinData {
   id: string;
@@ -12,6 +13,8 @@ interface CoinData {
 }
 
 const Crypto = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["crypto"],
     queryFn: async () => {
@@ -21,7 +24,7 @@ const Crypto = () => {
           params: {
             vs_currency: "usd",
             order: "market_cap_desc",
-            per_page: 10,
+            per_page: 100, // Increased to 100 for more results
             page: 1,
             sparkline: false,
           },
@@ -30,6 +33,13 @@ const Crypto = () => {
       return response.data as CoinData[];
     },
   });
+
+  // Filter the data based on search query
+  const filteredData = data?.filter(
+    (coin) =>
+      coin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      coin.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (isLoading)
     return (
@@ -59,8 +69,45 @@ const Crypto = () => {
           </p>
         </div>
 
+        {/* Search Input */}
+        <div className="mb-8 max-w-md mx-auto">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by name or symbol (e.g., Bitcoin, BTC)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 
+                       bg-white dark:bg-gray-800 text-gray-900 dark:text-white 
+                       focus:ring-2 focus:ring-blue-500 focus:border-transparent 
+                       placeholder-gray-500 dark:placeholder-gray-400"
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <svg
+                className="h-5 w-5 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="mb-6 text-center">
+          <p className="text-gray-600 dark:text-gray-400">
+            Showing {filteredData?.length || 0} results
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data?.map((coin) => (
+          {filteredData?.map((coin) => (
             <div
               key={coin.id}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 dark:border-gray-700"
@@ -114,6 +161,15 @@ const Crypto = () => {
             </div>
           ))}
         </div>
+
+        {/* No Results Message */}
+        {filteredData?.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-600 dark:text-gray-400 text-lg">
+              No cryptocurrencies found matching your search.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
