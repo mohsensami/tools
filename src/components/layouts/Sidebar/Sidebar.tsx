@@ -12,6 +12,7 @@ const menu = [
   { name: "deepseek", icon: "deepseek", link: "/deepseek" },
   { name: "chatgpt", icon: "chatgpt", link: "/chatgpt" },
   { name: "news", icon: "news", link: "/news" },
+  { name: "crypto", icon: "crypto", link: "/crypto" },
 ];
 
 const Sidebar = () => {
