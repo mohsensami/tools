@@ -16,6 +16,7 @@ import DeepSeek from "./page/DeepSeek";
 import ChatGpt from "./page/ChatGpt";
 import News from "./page/News";
 import Crypto from "./page/Crypto";
+import Unsplash from "./page/Unsplash";
 
 function App() {
   const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ function App() {
             <Route path="/chatgpt" element={<ChatGpt />} />
             <Route path="/news" element={<News />} />
             <Route path="/crypto" element={<Crypto />} />
+            <Route path="/unsplash" element={<Unsplash />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

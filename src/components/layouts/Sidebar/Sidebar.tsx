@@ -13,6 +13,7 @@ const menu = [
   { name: "chatgpt", icon: "chatgpt", link: "/chatgpt" },
   { name: "news", icon: "news", link: "/news" },
   { name: "crypto", icon: "crypto", link: "/crypto" },
+  { name: "unsplash", icon: "unsplash", link: "/unsplash" },
 ];
 
 const Sidebar = () => {
