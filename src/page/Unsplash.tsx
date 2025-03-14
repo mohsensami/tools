@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useQuery } from "@tanstack/react-query";
 
-const UNSPLASH_ACCESS_KEY = "YOUR_UNSPLASH_ACCESS_KEY"; // You'll need to replace this with your actual Unsplash API key
+const UNSPLASH_ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
+
+if (!UNSPLASH_ACCESS_KEY) {
+  throw new Error(
+    "Unsplash Access Key is not defined in environment variables"
+  );
+}
 
 interface UnsplashImage {
   id: string;
