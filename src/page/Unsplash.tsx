@@ -65,24 +65,19 @@ const getErrorMessage = (error: unknown): string => {
 
 const Unsplash = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Debounce search query
-  React.useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
+  const handleSearch = () => {
+    setSearchTerm(searchQuery);
+  };
 
   const { data, isLoading, error, isError, refetch } = useQuery({
-    queryKey: ["unsplashImages", debouncedQuery],
+    queryKey: ["unsplashImages", searchTerm],
     queryFn: async () => {
       try {
-        const endpoint = debouncedQuery
+        const endpoint = searchTerm
           ? `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
-              debouncedQuery
+              searchTerm
             )}&per_page=20`
           : "https://api.unsplash.com/photos/random?count=20";
 
@@ -93,26 +88,37 @@ const Unsplash = () => {
           timeout: 10000, // 10 second timeout
         });
 
-        return debouncedQuery ? response.data.results : response.data;
+        return searchTerm ? response.data.results : response.data;
       } catch (error) {
         throw error;
       }
     },
     enabled: true,
-    retry: 2, // Retry failed requests up to 2 times
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
+      <div className="mb-8 flex gap-2">
         <input
           type="text"
           placeholder="Search for images..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
+          className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        <button
+          onClick={handleSearch}
+          className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Search
+        </button>
       </div>
 
       {isLoading && (
