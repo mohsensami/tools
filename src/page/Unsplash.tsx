@@ -66,6 +66,9 @@ const getErrorMessage = (error: unknown): string => {
 const Unsplash = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedImage, setSelectedImage] = useState<UnsplashImage | null>(
+    null
+  );
 
   const handleSearch = () => {
     setSearchTerm(searchQuery);
@@ -150,7 +153,11 @@ const Unsplash = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {data?.map((image: UnsplashImage) => (
-          <div key={image.id} className="rounded-lg overflow-hidden shadow-lg">
+          <div
+            key={image.id}
+            className="rounded-lg overflow-hidden shadow-lg cursor-pointer transition-transform hover:scale-[1.02]"
+            onClick={() => setSelectedImage(image)}
+          >
             <img
               src={image.urls.small}
               alt={image.alt_description}
@@ -169,6 +176,48 @@ const Unsplash = () => {
           </div>
         ))}
       </div>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-7xl max-h-[90vh] w-full">
+            <button
+              className="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75"
+              onClick={() => setSelectedImage(null)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <img
+              src={selectedImage.urls.regular}
+              alt={selectedImage.alt_description}
+              className="w-full h-auto max-h-[90vh] object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div
+              className="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-50 text-white rounded-b-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <p>Photo by {selectedImage.user.name}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
