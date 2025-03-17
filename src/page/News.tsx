@@ -16,6 +16,9 @@ const News = () => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const articlesPerPage = 6;
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -27,6 +30,9 @@ const News = () => {
           }`
         );
         setArticles(response.data.articles);
+        setTotalPages(
+          Math.ceil(response.data.articles.length / articlesPerPage)
+        );
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch news articles");
@@ -36,6 +42,17 @@ const News = () => {
 
     fetchNews();
   }, []);
+
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticles = articles.slice(
+    indexOfFirstArticle,
+    indexOfLastArticle
+  );
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   if (loading) {
     return (
@@ -57,7 +74,7 @@ const News = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Latest News</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {articles.map((article, index) => (
+        {currentArticles.map((article, index) => (
           <div
             key={index}
             className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
@@ -88,6 +105,23 @@ const News = () => {
               </a>
             </div>
           </div>
+        ))}
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center items-center mt-8 space-x-2">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => handlePageChange(page)}
+            className={`px-4 py-2 rounded-md ${
+              currentPage === page
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            } transition-colors duration-300`}
+          >
+            {page}
+          </button>
         ))}
       </div>
     </div>
