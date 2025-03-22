@@ -17,6 +17,7 @@ import ChatGpt from "./page/ChatGpt";
 import News from "./page/News";
 import Crypto from "./page/Crypto";
 import Unsplash from "./page/Unsplash";
+import Convertor from "./page/convertor/Convertor";
 
 function App() {
   const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ function App() {
             <Route path="/news" element={<News />} />
             <Route path="/crypto" element={<Crypto />} />
             <Route path="/unsplash" element={<Unsplash />} />
+            <Route path="/convertor" element={<Convertor />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
