@@ -45,7 +45,9 @@ const Convertor = () => {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${import.meta.env.CLOUD_CONVERT_API_KEY}`,
+            Authorization: `Bearer ${
+              import.meta.env.VITE_CLOUD_CONVERT_API_KEY
+            }`,
           },
         }
       );
@@ -59,7 +61,9 @@ const Convertor = () => {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${import.meta.env.CLOUD_CONVERT_API_KEY}`,
+            Authorization: `Bearer ${
+              import.meta.env.VITE_CLOUD_CONVERT_API_KEY
+            }`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
