@@ -12,6 +12,7 @@ interface ThumbnailSettings {
 const Convertor = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [thumbnailSettings, setThumbnailSettings] = useState<ThumbnailSettings>(
     {
@@ -28,6 +29,7 @@ const Convertor = () => {
       // Create preview URL
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
+      setThumbnailUrl(null); // Reset thumbnail when new file is selected
     }
   };
 
@@ -78,8 +80,35 @@ const Convertor = () => {
       );
 
       const thumbnailResult = await thumbnailResponse.json();
-      // Handle the thumbnail result - you might want to download it or display it
-      console.log("Thumbnail created:", thumbnailResult);
+
+      // Wait for the task to complete and get the file URL
+      const taskId = thumbnailResult.data.id;
+      let taskStatus = "processing";
+
+      while (taskStatus === "processing") {
+        const statusResponse = await fetch(
+          `https://api.cloudconvert.com/v2/tasks/${taskId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${
+                import.meta.env.VITE_CLOUD_CONVERT_API_KEY
+              }`,
+            },
+          }
+        );
+        const statusResult = await statusResponse.json();
+        taskStatus = statusResult.data.status;
+
+        if (taskStatus === "finished") {
+          setThumbnailUrl(statusResult.data.result.files[0].url);
+          break;
+        } else if (taskStatus === "error") {
+          throw new Error("Thumbnail conversion failed");
+        }
+
+        // Wait for 1 second before checking again
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
     } catch (error) {
       console.error("Error creating thumbnail:", error);
     } finally {
@@ -146,18 +175,40 @@ const Convertor = () => {
                 </div>
               </div>
 
-              {previewUrl && (
-                <div className="mt-4">
-                  <Label>Preview</Label>
-                  <div className="mt-2 border rounded-lg overflow-hidden">
-                    <img
-                      src={previewUrl}
-                      alt="Preview"
-                      className="max-w-full h-auto"
-                    />
-                  </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Original Image</Label>
+                  {previewUrl && (
+                    <div className="mt-2 border rounded-lg overflow-hidden">
+                      <img
+                        src={previewUrl}
+                        alt="Original"
+                        className="max-w-full h-auto"
+                      />
+                    </div>
+                  )}
                 </div>
-              )}
+                <div>
+                  <Label>Thumbnail Result</Label>
+                  {thumbnailUrl ? (
+                    <div className="mt-2 border rounded-lg overflow-hidden">
+                      <img
+                        src={thumbnailUrl}
+                        alt="Thumbnail"
+                        className="max-w-full h-auto"
+                      />
+                    </div>
+                  ) : loading ? (
+                    <div className="mt-2 border rounded-lg p-4 text-center">
+                      Converting...
+                    </div>
+                  ) : (
+                    <div className="mt-2 border rounded-lg p-4 text-center text-gray-500">
+                      Thumbnail will appear here
+                    </div>
+                  )}
+                </div>
+              </div>
 
               <Button
                 onClick={handleConvert}
