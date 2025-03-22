@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-// import { Label } from "@/components/ui/label";
+import { Label } from "@/components/ui/label";
 
 interface ThumbnailSettings {
   width: number;
@@ -98,7 +98,7 @@ const Convertor = () => {
 
             <div className="space-y-4">
               <div>
-                {/* <Label htmlFor="file-input">Choose Image</Label> */}
+                <Label htmlFor="file-input">Choose Image</Label>
                 <Input
                   id="file-input"
                   type="file"
@@ -111,7 +111,7 @@ const Convertor = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  {/* <Label htmlFor="width">Width (px)</Label> */}
+                  <Label htmlFor="width">Width (px)</Label>
                   <Input
                     id="width"
                     type="number"
@@ -126,7 +126,7 @@ const Convertor = () => {
                   />
                 </div>
                 <div>
-                  {/* <Label htmlFor="height">Height (px)</Label> */}
+                  <Label htmlFor="height">Height (px)</Label>
                   <Input
                     id="height"
                     type="number"
@@ -144,7 +144,7 @@ const Convertor = () => {
 
               {previewUrl && (
                 <div className="mt-4">
-                  {/* <Label>Preview</Label> */}
+                  <Label>Preview</Label>
                   <div className="mt-2 border rounded-lg overflow-hidden">
                     <img
                       src={previewUrl}
