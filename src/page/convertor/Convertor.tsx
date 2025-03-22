@@ -1,7 +1,43 @@
 import React from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Convertor = () => {
-  return <div>Convertor</div>;
+  return (
+    <div className="w-full p-4">
+      <Tabs defaultValue="length" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="length">Length</TabsTrigger>
+          <TabsTrigger value="weight">Weight</TabsTrigger>
+          <TabsTrigger value="temperature">Temperature</TabsTrigger>
+          <TabsTrigger value="currency">Currency</TabsTrigger>
+        </TabsList>
+        <TabsContent value="length" className="mt-6">
+          <div className="rounded-lg border p-4">
+            <h3 className="text-lg font-medium">Length Conversion</h3>
+            {/* Length conversion content will go here */}
+          </div>
+        </TabsContent>
+        <TabsContent value="weight" className="mt-6">
+          <div className="rounded-lg border p-4">
+            <h3 className="text-lg font-medium">Weight Conversion</h3>
+            {/* Weight conversion content will go here */}
+          </div>
+        </TabsContent>
+        <TabsContent value="temperature" className="mt-6">
+          <div className="rounded-lg border p-4">
+            <h3 className="text-lg font-medium">Temperature Conversion</h3>
+            {/* Temperature conversion content will go here */}
+          </div>
+        </TabsContent>
+        <TabsContent value="currency" className="mt-6">
+          <div className="rounded-lg border p-4">
+            <h3 className="text-lg font-medium">Currency Conversion</h3>
+            {/* Currency conversion content will go here */}
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
 };
 
 export default Convertor;
