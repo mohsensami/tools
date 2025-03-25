@@ -38,76 +38,95 @@ const Convertor = () => {
 
     setLoading(true);
     try {
-      // First, upload the file to get the input ID
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-
-      const uploadResponse = await fetch(
+      // First, get the upload URL
+      const uploadInitResponse = await fetch(
         "https://api.cloudconvert.com/v2/import/upload",
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${
-              import.meta.env.VITE_CLOUD_CONVERT_API_KEY
-            }`,
+            Authorization: `Bearer ${import.meta.env.VITE_CLOUD_CONVERT_API_KEY}`,
           },
         }
       );
 
-      const uploadResult = await uploadResponse.json();
-      const inputId = uploadResult.data.id;
+      const uploadInit = await uploadInitResponse.json();
+      const { form } = uploadInit.result;
 
-      // Then create the thumbnail task
+      // Upload the file to S3
+      const formData = new FormData();
+      Object.entries(form.parameters).forEach(([key, value]) => {
+        formData.append(key, value as string);
+      });
+      // Replace ${filename} placeholder with actual filename
+      const keyWithFilename = form.parameters.key.replace('${filename}', selectedFile.name);
+      formData.set('key', keyWithFilename);
+      formData.append('file', selectedFile);
+
+      const uploadResponse = await fetch(form.url, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadResponse.ok && uploadResponse.status !== 201) {
+        throw new Error("File upload failed");
+      }
+
+      // Wait a moment for the upload to be processed
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Create thumbnail task
       const thumbnailResponse = await fetch(
         "https://api.cloudconvert.com/v2/thumbnail",
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${
-              import.meta.env.VITE_CLOUD_CONVERT_API_KEY
-            }`,
+            Authorization: `Bearer ${import.meta.env.VITE_CLOUD_CONVERT_API_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            input: inputId,
+            input: uploadInit.id,
             input_format: selectedFile.type.split("/")[1],
             output_format: "png",
             width: thumbnailSettings.width,
             height: thumbnailSettings.height,
-            fit: "crop",
+            fit: "crop"
           }),
         }
       );
 
       const thumbnailResult = await thumbnailResponse.json();
+      console.log('Thumbnail Result:', thumbnailResult); // For debugging
 
-      // Wait for the task to complete and get the file URL
+      // Continue with status polling...
       const taskId = thumbnailResult.data.id;
-      let taskStatus = "processing";
 
-      while (taskStatus === "processing") {
+      // Poll for task completion
+      let taskStatus = "processing";
+      while (taskStatus === "processing" || taskStatus === "waiting") {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         const statusResponse = await fetch(
           `https://api.cloudconvert.com/v2/tasks/${taskId}`,
           {
             headers: {
-              Authorization: `Bearer ${
-                import.meta.env.VITE_CLOUD_CONVERT_API_KEY
-              }`,
+              Authorization: `Bearer ${import.meta.env.VITE_CLOUD_CONVERT_API_KEY}`,
             },
           }
         );
+
         const statusResult = await statusResponse.json();
+        console.log('Status Result:', statusResult);
         taskStatus = statusResult.data.status;
 
-        if (taskStatus === "finished") {
-          setThumbnailUrl(statusResult.data.result.files[0].url);
+        if (statusResult.data.status === "finished") {
+          const downloadUrl = statusResult.data.result.files[0].url;
+          // Download the image
+          const imageResponse = await fetch(downloadUrl);
+          const imageBlob = await imageResponse.blob();
+          const imageUrl = URL.createObjectURL(imageBlob);
+          setThumbnailUrl(imageUrl);
           break;
-        } else if (taskStatus === "error") {
-          throw new Error("Thumbnail conversion failed");
         }
-
-        // Wait for 1 second before checking again
-        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     } catch (error) {
       console.error("Error creating thumbnail:", error);
