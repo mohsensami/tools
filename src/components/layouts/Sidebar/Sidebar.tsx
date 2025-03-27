@@ -14,7 +14,6 @@ const menu = [
   { name: "news", icon: "news", link: "/news" },
   { name: "crypto", icon: "crypto", link: "/crypto" },
   { name: "unsplash", icon: "unsplash", link: "/unsplash" },
-  { name: "Convertor", icon: "convertor", link: "/convertor" },
 ];
 
 const Sidebar = () => {
