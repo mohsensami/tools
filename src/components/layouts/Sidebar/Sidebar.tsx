@@ -9,10 +9,8 @@ const menu = [
   { name: "dictionary", icon: "dictionary", link: "/dictionary" },
   { name: "qr-code", icon: "qr-code", link: "/qr-code" },
   { name: "times", icon: "times", link: "/times" },
-  { name: "deepseek", icon: "deepseek", link: "/deepseek" },
   { name: "chatgpt", icon: "chatgpt", link: "/chatgpt" },
   { name: "news", icon: "news", link: "/news" },
-  { name: "crypto", icon: "crypto", link: "/crypto" },
   { name: "unsplash", icon: "unsplash", link: "/unsplash" },
 ];
 

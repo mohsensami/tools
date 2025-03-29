@@ -12,8 +12,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WorldTimes from "./page/WorldTimes";
 import Movie from "./page/movies/Movie";
 import { QrCode } from "./page/QrCode";
-import DeepSeek from "./page/DeepSeek";
-import ChatGpt from "./page/ChatGpt";
 import News from "./page/News";
 import Crypto from "./page/Crypto";
 import Unsplash from "./page/Unsplash";
@@ -33,8 +31,6 @@ function App() {
             <Route path="/dictionary" element={<Dictionary />} />
             <Route path="/times" element={<WorldTimes />} />
             <Route path="/qr-code" element={<QrCode />} />
-            <Route path="/deepseek" element={<DeepSeek />} />
-            <Route path="/chatgpt" element={<ChatGpt />} />
             <Route path="/news" element={<News />} />
             <Route path="/crypto" element={<Crypto />} />
             <Route path="/unsplash" element={<Unsplash />} />
