@@ -1,17 +1,28 @@
 import Logo from "../../Logo";
 import MenuItem from "./MenuItem";
 
+import {
+  House,
+  Clapperboard,
+  CloudHail,
+  Camera,
+  QrCode,
+  Cable,
+  BookA,
+  Clock,
+  Newspaper,
+} from "lucide-react";
+
 const menu = [
-  { name: "Home", icon: "Home", link: "/" },
-  { name: "Movies", icon: "Movies", link: "/movies" },
-  { name: "PowerSupply", icon: "Power", link: "/power-supply-calculator" },
-  { name: "weather", icon: "weather", link: "/weather" },
-  { name: "dictionary", icon: "dictionary", link: "/dictionary" },
-  { name: "qr-code", icon: "qr-code", link: "/qr-code" },
-  { name: "times", icon: "times", link: "/times" },
-  { name: "chatgpt", icon: "chatgpt", link: "/chatgpt" },
-  { name: "news", icon: "news", link: "/news" },
-  { name: "unsplash", icon: "unsplash", link: "/unsplash" },
+  { name: "Home", icon: <House />, link: "/" },
+  { name: "Movies", icon: <Clapperboard />, link: "/movies" },
+  { name: "PowerSupply", icon: <Cable />, link: "/power-supply-calculator" },
+  { name: "Weather", icon: <CloudHail />, link: "/weather" },
+  { name: "Dictionary", icon: <BookA />, link: "/dictionary" },
+  { name: "Qr-code", icon: <QrCode />, link: "/qr-code" },
+  { name: "Times", icon: <Clock />, link: "/times" },
+  { name: "News", icon: <Newspaper />, link: "/news" },
+  { name: "Unsplash", icon: <Camera />, link: "/unsplash" },
 ];
 
 const Sidebar = () => {
