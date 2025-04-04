@@ -151,11 +151,18 @@ const Unsplash = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {searchTerm && (
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 bg-gray-400 p-4 rounded-lg">
+          Search results for:{" "}
+          <span className="text-blue-600">{searchTerm}</span>
+        </h2>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
         {data?.map((image: UnsplashImage) => (
           <div
             key={image.id}
-            className="rounded-lg overflow-hidden shadow-lg cursor-pointer transition-transform hover:scale-[1.02]"
+            className="rounded-lg overflow-hidden shadow-lg cursor-pointer transition-transform hover:scale-[1.02] bg-gray-400"
             onClick={() => setSelectedImage(image)}
           >
             <img
@@ -169,7 +176,7 @@ const Unsplash = () => {
               }}
             />
             <div className="p-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-200">
                 Photo by {image.user.name}
               </p>
             </div>
