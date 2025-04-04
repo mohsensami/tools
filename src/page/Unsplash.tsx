@@ -180,12 +180,12 @@ const Unsplash = () => {
       {/* Image Modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 rounded-lg"
           onClick={() => setSelectedImage(null)}
         >
-          <div className="relative max-w-7xl max-h-[90vh] w-full">
+          <div className="bg-white bg-opacity-75 relative max-w-7xl max-h-[90vh] w-full">
             <button
-              className="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75"
+              className="absolute top-4 right-4 text-black bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 z-10"
               onClick={() => setSelectedImage(null)}
             >
               <svg
@@ -210,7 +210,7 @@ const Unsplash = () => {
               onClick={(e) => e.stopPropagation()}
             />
             <div
-              className="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-50 text-white rounded-b-lg"
+              className="absolute text-black top-0 left-0 right-0 p-4 bg-white bg-opacity-50 rounded-t-lg"
               onClick={(e) => e.stopPropagation()}
             >
               <p>Photo by {selectedImage.user.name}</p>
