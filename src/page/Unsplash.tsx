@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { Heart } from "lucide-react";
 
 const UNSPLASH_ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
@@ -166,8 +167,8 @@ const Unsplash = () => {
             className="relative rounded-lg overflow-hidden shadow-lg cursor-pointer transition-transform hover:scale-[1.02] bg-gray-400"
             onClick={() => setSelectedImage(image)}
           >
-            <span className="absolute top-0 left-0 z-50">
-              Likes: {image?.likes}
+            <span className="absolute top-0 left-0 z-50 text-red-600">
+              <Heart /> {image?.likes}
             </span>
             <img
               src={image.urls.small}
