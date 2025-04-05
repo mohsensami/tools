@@ -20,6 +20,7 @@ interface UnsplashImage {
   user: {
     name: string;
   };
+  likes: number;
 }
 
 interface ErrorResponse {
@@ -162,9 +163,12 @@ const Unsplash = () => {
         {data?.map((image: UnsplashImage) => (
           <div
             key={image.id}
-            className="rounded-lg overflow-hidden shadow-lg cursor-pointer transition-transform hover:scale-[1.02] bg-gray-400"
+            className="relative rounded-lg overflow-hidden shadow-lg cursor-pointer transition-transform hover:scale-[1.02] bg-gray-400"
             onClick={() => setSelectedImage(image)}
           >
+            <span className="absolute top-0 left-0 z-50">
+              Likes: {image?.likes}
+            </span>
             <img
               src={image.urls.small}
               alt={image.alt_description}
