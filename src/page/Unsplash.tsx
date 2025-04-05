@@ -176,8 +176,11 @@ const Unsplash = () => {
               }}
             />
             <div className="p-4">
+              <h1 className="text-lg font-bold text-gray-200">
+                {image.alt_description}
+              </h1>
               <p className="text-sm text-gray-200">
-                Photo by {image.user.name}
+                Photo by: {image.user.name}
               </p>
             </div>
           </div>
