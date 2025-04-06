@@ -28,8 +28,22 @@ interface StorageType {
   power: number;
 }
 
+interface GpuModel {
+  name: string;
+  power: number;
+}
+
+interface GpuBrand {
+  models: GpuModel[];
+}
+
+interface GpuData {
+  [key: string]: GpuBrand;
+}
+
 interface Data {
   cpu: CpuData;
+  gpu: GpuData;
   ram: {
     modules: RamModule[];
     number: number[];
@@ -93,6 +107,41 @@ const data: Data = {
       },
     },
   },
+  gpu: {
+    NVIDIA: {
+      models: [
+        { name: "RTX 4090", power: 450 },
+        { name: "RTX 4080", power: 320 },
+        { name: "RTX 4070 Ti", power: 285 },
+        { name: "RTX 4070", power: 200 },
+        { name: "RTX 4060 Ti", power: 160 },
+        { name: "RTX 4060", power: 115 },
+        { name: "RTX 3090 Ti", power: 450 },
+        { name: "RTX 3090", power: 350 },
+        { name: "RTX 3080 Ti", power: 350 },
+        { name: "RTX 3080", power: 320 },
+        { name: "RTX 3070 Ti", power: 290 },
+        { name: "RTX 3070", power: 220 },
+        { name: "RTX 3060 Ti", power: 200 },
+        { name: "RTX 3060", power: 170 },
+      ],
+    },
+    AMD: {
+      models: [
+        { name: "RX 7900 XTX", power: 355 },
+        { name: "RX 7900 XT", power: 315 },
+        { name: "RX 6950 XT", power: 335 },
+        { name: "RX 6900 XT", power: 300 },
+        { name: "RX 6800 XT", power: 300 },
+        { name: "RX 6800", power: 250 },
+        { name: "RX 6750 XT", power: 250 },
+        { name: "RX 6700 XT", power: 230 },
+        { name: "RX 6650 XT", power: 176 },
+        { name: "RX 6600 XT", power: 160 },
+        { name: "RX 6600", power: 132 },
+      ],
+    },
+  },
   ram: {
     modules: [
       { name: "DDR4", power: 5 },
@@ -114,6 +163,8 @@ const PowerSupply = () => {
   const [brand, setBrand] = useState<string>("Not Selected");
   const [socket, setSocket] = useState<string>("Not Selected");
   const [model, setModel] = useState<string>("Not Selected");
+  const [gpuBrand, setGpuBrand] = useState<string>("Not Selected");
+  const [gpuModel, setGpuModel] = useState<string>("Not Selected");
   const [ramType, setRamType] = useState<string>("Not Selected");
   const [ramNumber, setRamNumber] = useState<number>(1);
   const [storageType, setStorageType] = useState<string>("Not Selected");
@@ -135,6 +186,14 @@ const PowerSupply = () => {
       power += selectedCpu ? selectedCpu.power : 0;
     }
 
+    // GPU Power
+    if (gpuBrand !== "Not Selected" && gpuModel !== "Not Selected") {
+      const selectedGpu = data.gpu[
+        gpuBrand as keyof typeof data.gpu
+      ].models.find((m: GpuModel) => m.name === gpuModel);
+      power += selectedGpu ? selectedGpu.power : 0;
+    }
+
     // RAM Power
     if (ramType !== "Not Selected") {
       const selectedRam = data.ram.modules.find((r) => r.name === ramType);
@@ -150,7 +209,17 @@ const PowerSupply = () => {
     }
 
     setTotalPower(power);
-  }, [brand, socket, model, ramType, ramNumber, storageType, storageNumber]);
+  }, [
+    brand,
+    socket,
+    model,
+    gpuBrand,
+    gpuModel,
+    ramType,
+    ramNumber,
+    storageType,
+    storageNumber,
+  ]);
 
   return (
     <div className="p-4 bg-gray-100 rounded-lg shadow-md w-full">
@@ -222,6 +291,56 @@ const PowerSupply = () => {
                 <option>Not Selected</option>
                 {socket !== "Not Selected" &&
                   data.cpu[brand as keyof typeof data.cpu][socket].models.map(
+                    (m) => (
+                      <option key={m.name} value={m.name}>
+                        {m.name}
+                      </option>
+                    )
+                  )}
+              </select>
+            </div>
+          </div>
+
+          {/* GPU Section */}
+          <div className="space-y-4 mt-6">
+            <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">
+              GPU Selection
+            </h2>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Brand:
+              </label>
+              <select
+                value={gpuBrand}
+                onChange={(e) => {
+                  setGpuBrand(e.target.value);
+                  setGpuModel("Not Selected");
+                }}
+                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option>Not Selected</option>
+                {Object.keys(data.gpu).map((b) => (
+                  <option key={b} value={b}>
+                    {b}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Model:
+              </label>
+              <select
+                value={gpuModel}
+                onChange={(e) => setGpuModel(e.target.value)}
+                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled={gpuBrand === "Not Selected"}
+              >
+                <option>Not Selected</option>
+                {gpuBrand !== "Not Selected" &&
+                  data.gpu[gpuBrand as keyof typeof data.gpu].models.map(
                     (m) => (
                       <option key={m.name} value={m.name}>
                         {m.name}
@@ -327,9 +446,14 @@ const PowerSupply = () => {
             </p>
             <p className="text-4xl font-bold text-blue-600">{totalPower}W</p>
             {totalPower > 0 && (
-              <p className="mt-4 text-sm text-gray-500">
-                Recommended PSU: {Math.ceil(totalPower * 1.2)}W
-              </p>
+              <div className="mt-4 space-y-2">
+                <p className="text-sm text-gray-500">
+                  Recommended PSU: {Math.ceil(totalPower * 1.2)}W
+                </p>
+                <p className="text-xs text-gray-400">
+                  * Adding 20% headroom for system stability and future upgrades
+                </p>
+              </div>
             )}
           </div>
         </div>
