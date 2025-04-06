@@ -171,6 +171,19 @@ const PowerSupply = () => {
   const [storageNumber, setStorageNumber] = useState<number>(1);
   const [totalPower, setTotalPower] = useState<number>(0);
 
+  const handleReset = () => {
+    setBrand("Not Selected");
+    setSocket("Not Selected");
+    setModel("Not Selected");
+    setGpuBrand("Not Selected");
+    setGpuModel("Not Selected");
+    setRamType("Not Selected");
+    setRamNumber(1);
+    setStorageType("Not Selected");
+    setStorageNumber(1);
+    setTotalPower(0);
+  };
+
   useEffect(() => {
     let power = 0;
 
@@ -222,239 +235,274 @@ const PowerSupply = () => {
   ]);
 
   return (
-    <div className="p-4 bg-gray-100 rounded-lg shadow-md w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-4 space-y-4 bg-white rounded-lg shadow">
-          {/* CPU Section */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">
-              CPU Selection
-            </h2>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Brand:
-              </label>
-              <select
-                value={brand}
-                onChange={(e) => {
-                  setBrand(e.target.value);
-                  setSocket("Not Selected");
-                  setModel("Not Selected");
-                }}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option>Not Selected</option>
-                {Object.keys(data.cpu).map((b) => (
-                  <option key={b} value={b}>
-                    {b}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Socket:
-              </label>
-              <select
-                value={socket}
-                onChange={(e) => {
-                  setSocket(e.target.value);
-                  setModel("Not Selected");
-                }}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                disabled={brand === "Not Selected"}
-              >
-                <option>Not Selected</option>
-                {brand !== "Not Selected" &&
-                  Object.keys(data.cpu[brand as keyof typeof data.cpu]).map(
-                    (s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    )
-                  )}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Model:
-              </label>
-              <select
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                disabled={socket === "Not Selected"}
-              >
-                <option>Not Selected</option>
-                {socket !== "Not Selected" &&
-                  data.cpu[brand as keyof typeof data.cpu][socket].models.map(
-                    (m) => (
-                      <option key={m.name} value={m.name}>
-                        {m.name}
-                      </option>
-                    )
-                  )}
-              </select>
-            </div>
-          </div>
-
-          {/* GPU Section */}
-          <div className="space-y-4 mt-6">
-            <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">
-              GPU Selection
-            </h2>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Brand:
-              </label>
-              <select
-                value={gpuBrand}
-                onChange={(e) => {
-                  setGpuBrand(e.target.value);
-                  setGpuModel("Not Selected");
-                }}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option>Not Selected</option>
-                {Object.keys(data.gpu).map((b) => (
-                  <option key={b} value={b}>
-                    {b}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Model:
-              </label>
-              <select
-                value={gpuModel}
-                onChange={(e) => setGpuModel(e.target.value)}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                disabled={gpuBrand === "Not Selected"}
-              >
-                <option>Not Selected</option>
-                {gpuBrand !== "Not Selected" &&
-                  data.gpu[gpuBrand as keyof typeof data.gpu].models.map(
-                    (m) => (
-                      <option key={m.name} value={m.name}>
-                        {m.name}
-                      </option>
-                    )
-                  )}
-              </select>
-            </div>
-          </div>
-
-          {/* RAM Section */}
-          <div className="space-y-4 mt-6">
-            <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">
-              RAM Selection
-            </h2>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Memory Type:
-              </label>
-              <select
-                value={ramType}
-                onChange={(e) => setRamType(e.target.value)}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option>Not Selected</option>
-                {data.ram.modules.map((r) => (
-                  <option key={r.name} value={r.name}>
-                    {r.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Number of Modules:
-              </label>
-              <select
-                value={ramNumber}
-                onChange={(e) => setRamNumber(Number(e.target.value))}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                {data.ram.number.map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Storage Section */}
-          <div className="space-y-4 mt-6">
-            <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">
-              Storage Selection
-            </h2>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Storage Type:
-              </label>
-              <select
-                value={storageType}
-                onChange={(e) => setStorageType(e.target.value)}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option>Not Selected</option>
-                {data.storage.types.map((s) => (
-                  <option key={s.name} value={s.name}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Number of Devices:
-              </label>
-              <select
-                value={storageNumber}
-                onChange={(e) => setStorageNumber(Number(e.target.value))}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                {data.storage.number.map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-100 py-8">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Power Supply Calculator
+          </h1>
+          <p className="mt-2 text-gray-600">
+            Calculate the power consumption of your PC components
+          </p>
         </div>
 
-        <div className="p-4 bg-white rounded-lg shadow flex flex-col items-center justify-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            Power Supply Calculator
-          </h2>
-          <div className="text-center">
-            <p className="text-lg text-gray-600 mb-2">
-              Total Power Consumption:
-            </p>
-            <p className="text-4xl font-bold text-blue-600">{totalPower}W</p>
-            {totalPower > 0 && (
-              <div className="mt-4 space-y-2">
-                <p className="text-sm text-gray-500">
-                  Recommended PSU: {Math.ceil(totalPower * 1.2)}W
-                </p>
-                <p className="text-xs text-gray-400">
-                  * Adding 20% headroom for system stability and future upgrades
-                </p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left side - Component Selection */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* CPU Section */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+                CPU Selection
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Brand:
+                  </label>
+                  <select
+                    value={brand}
+                    onChange={(e) => {
+                      setBrand(e.target.value);
+                      setSocket("Not Selected");
+                      setModel("Not Selected");
+                    }}
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option>Not Selected</option>
+                    {Object.keys(data.cpu).map((b) => (
+                      <option key={b} value={b}>
+                        {b}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Socket:
+                  </label>
+                  <select
+                    value={socket}
+                    onChange={(e) => {
+                      setSocket(e.target.value);
+                      setModel("Not Selected");
+                    }}
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    disabled={brand === "Not Selected"}
+                  >
+                    <option>Not Selected</option>
+                    {brand !== "Not Selected" &&
+                      Object.keys(data.cpu[brand as keyof typeof data.cpu]).map(
+                        (s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        )
+                      )}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Model:
+                  </label>
+                  <select
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    disabled={socket === "Not Selected"}
+                  >
+                    <option>Not Selected</option>
+                    {socket !== "Not Selected" &&
+                      data.cpu[brand as keyof typeof data.cpu][
+                        socket
+                      ].models.map((m) => (
+                        <option key={m.name} value={m.name}>
+                          {m.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
-            )}
+            </div>
+
+            {/* GPU Section */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+                GPU Selection
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Brand:
+                  </label>
+                  <select
+                    value={gpuBrand}
+                    onChange={(e) => {
+                      setGpuBrand(e.target.value);
+                      setGpuModel("Not Selected");
+                    }}
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option>Not Selected</option>
+                    {Object.keys(data.gpu).map((b) => (
+                      <option key={b} value={b}>
+                        {b}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Model:
+                  </label>
+                  <select
+                    value={gpuModel}
+                    onChange={(e) => setGpuModel(e.target.value)}
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    disabled={gpuBrand === "Not Selected"}
+                  >
+                    <option>Not Selected</option>
+                    {gpuBrand !== "Not Selected" &&
+                      data.gpu[gpuBrand as keyof typeof data.gpu].models.map(
+                        (m) => (
+                          <option key={m.name} value={m.name}>
+                            {m.name}
+                          </option>
+                        )
+                      )}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* RAM Section */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+                RAM Selection
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Memory Type:
+                  </label>
+                  <select
+                    value={ramType}
+                    onChange={(e) => setRamType(e.target.value)}
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option>Not Selected</option>
+                    {data.ram.modules.map((r) => (
+                      <option key={r.name} value={r.name}>
+                        {r.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Number of Modules:
+                  </label>
+                  <select
+                    value={ramNumber}
+                    onChange={(e) => setRamNumber(Number(e.target.value))}
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {data.ram.number.map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Storage Section */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+                Storage Selection
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Storage Type:
+                  </label>
+                  <select
+                    value={storageType}
+                    onChange={(e) => setStorageType(e.target.value)}
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option>Not Selected</option>
+                    {data.storage.types.map((s) => (
+                      <option key={s.name} value={s.name}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Number of Devices:
+                  </label>
+                  <select
+                    value={storageNumber}
+                    onChange={(e) => setStorageNumber(Number(e.target.value))}
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {data.storage.number.map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right side - Power Calculator */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow p-6 sticky top-8">
+              <div className="text-center space-y-6">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Power Supply Calculator
+                </h2>
+
+                <div className="space-y-4">
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-lg text-gray-600">
+                      Total Power Consumption:
+                    </p>
+                    <p className="text-4xl font-bold text-blue-600 mt-2">
+                      {totalPower}W
+                    </p>
+                  </div>
+
+                  {totalPower > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-lg font-semibold text-gray-700">
+                        Recommended PSU: {Math.ceil(totalPower * 1.2)}W
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        * Adding 20% headroom for system stability and future
+                        upgrades
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={handleReset}
+                  className="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                >
+                  Reset Calculator
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
