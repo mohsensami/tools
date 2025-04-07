@@ -20,8 +20,17 @@ interface UnsplashImage {
   alt_description: string;
   user: {
     name: string;
+    profile_image?: {
+      small: string;
+    };
   };
   likes: number;
+  description?: string;
+  width: number;
+  height: number;
+  location?: {
+    name: string;
+  };
 }
 
 interface ErrorResponse {
@@ -164,15 +173,12 @@ const Unsplash = () => {
         {data?.map((image: UnsplashImage) => (
           <div
             key={image.id}
-            className="relative rounded-lg overflow-hidden shadow-lg cursor-pointer transition-transform hover:scale-[1.02] bg-gray-400"
+            className="relative rounded-lg overflow-hidden shadow-lg cursor-pointer transition-transform hover:scale-[1.02] bg-gray-800"
             onClick={() => setSelectedImage(image)}
           >
-            <span className="absolute top-0 left-0 z-50 text-red-600">
-              <Heart /> {image?.likes}
-            </span>
             <img
               src={image.urls.small}
-              alt={image.alt_description}
+              alt={image.alt_description || "Unsplash image"}
               className="w-full h-64 object-cover"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
@@ -181,12 +187,42 @@ const Unsplash = () => {
               }}
             />
             <div className="p-4">
-              <h1 className="text-lg font-bold text-gray-200">
-                {image.alt_description}
-              </h1>
-              <p className="text-sm text-gray-200">
-                Photo by: {image.user.name}
-              </p>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center">
+                  {image.user.profile_image?.small && (
+                    <img
+                      src={image.user.profile_image.small}
+                      alt={image.user.name}
+                      className="w-8 h-8 rounded-full mr-2"
+                    />
+                  )}
+                  <p className="text-sm font-medium text-gray-200">
+                    {image.user.name}
+                  </p>
+                </div>
+                <div className="flex items-center text-red-500">
+                  <Heart className="w-4 h-4 mr-1" />
+                  <span className="text-sm">{image.likes}</span>
+                </div>
+              </div>
+              <h3 className="text-lg font-bold text-gray-200 truncate">
+                {image.alt_description || "Untitled"}
+              </h3>
+              {image.description && (
+                <p className="text-sm text-gray-300 mt-1 line-clamp-2">
+                  {image.description}
+                </p>
+              )}
+              <div className="mt-3 flex justify-between items-center text-xs text-gray-400">
+                <span>
+                  {image.width} × {image.height}
+                </span>
+                {image.location?.name && (
+                  <span className="truncate max-w-[150px]">
+                    📍 {image.location.name}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         ))}
