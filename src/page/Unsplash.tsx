@@ -16,6 +16,9 @@ interface UnsplashImage {
   urls: {
     regular: string;
     small: string;
+    full: string;
+    raw: string;
+    thumb: string;
   };
   alt_description: string;
   user: {
@@ -111,6 +114,10 @@ const Unsplash = () => {
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
+
+  const handleDownload = (url: string, size: string) => {
+    window.open(url, "_blank");
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -260,6 +267,47 @@ const Unsplash = () => {
               className="w-full h-auto max-h-[90vh] object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />
+            <div
+              className="absolute bottom-0 left-0 right-0 p-4 bg-white bg-opacity-90 rounded-b-lg flex flex-wrap gap-2 justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() =>
+                  handleDownload(selectedImage.urls.thumb, "Thumbnail")
+                }
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              >
+                Download Thumbnail
+              </button>
+              <button
+                onClick={() =>
+                  handleDownload(selectedImage.urls.small, "Small")
+                }
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              >
+                Download Small
+              </button>
+              <button
+                onClick={() =>
+                  handleDownload(selectedImage.urls.regular, "Regular")
+                }
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              >
+                Download Regular
+              </button>
+              <button
+                onClick={() => handleDownload(selectedImage.urls.full, "Full")}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              >
+                Download Full
+              </button>
+              <button
+                onClick={() => handleDownload(selectedImage.urls.raw, "Raw")}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              >
+                Download Raw
+              </button>
+            </div>
             <div
               className="absolute text-black top-0 left-0 right-0 p-4 bg-white bg-opacity-50 rounded-t-lg"
               onClick={(e) => e.stopPropagation()}
