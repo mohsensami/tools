@@ -12,8 +12,11 @@ if (!UNSPLASH_ACCESS_KEY || !UNSPLASH_SECRET_KEY) {
   );
 }
 
-const REDIRECT_URI = window.location.origin;
-const OAUTH_URL = `https://unsplash.com/oauth/authorize?client_id=${UNSPLASH_ACCESS_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=write_likes`;
+// Use the exact redirect URI that matches your Unsplash app settings
+const REDIRECT_URI = "http://localhost:5173/unsplash";
+const OAUTH_URL = `https://unsplash.com/oauth/authorize?client_id=${UNSPLASH_ACCESS_KEY}&redirect_uri=${encodeURIComponent(
+  REDIRECT_URI
+)}&response_type=code&scope=write_likes`;
 
 interface UnsplashImage {
   id: string;
