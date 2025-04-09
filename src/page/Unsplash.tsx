@@ -1,15 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { Heart } from "lucide-react";
 
 const UNSPLASH_ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
+const UNSPLASH_SECRET_KEY = import.meta.env.VITE_UNSPLASH_SECRET_KEY;
 
-if (!UNSPLASH_ACCESS_KEY) {
+if (!UNSPLASH_ACCESS_KEY || !UNSPLASH_SECRET_KEY) {
   throw new Error(
-    "Unsplash Access Key is not defined in environment variables"
+    "Unsplash credentials are not properly defined in environment variables"
   );
 }
+
+const REDIRECT_URI = window.location.origin;
+const OAUTH_URL = `https://unsplash.com/oauth/authorize?client_id=${UNSPLASH_ACCESS_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=write_likes`;
 
 interface UnsplashImage {
   id: string;
@@ -83,6 +87,45 @@ const Unsplash = () => {
   const [selectedImage, setSelectedImage] = useState<UnsplashImage | null>(
     null
   );
+  const [likedImages, setLikedImages] = useState<Set<string>>(new Set());
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we have a code in the URL (after OAuth redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get("code");
+
+    if (code) {
+      // Exchange the code for an access token
+      const getAccessToken = async () => {
+        try {
+          const response = await axios.post(
+            "https://unsplash.com/oauth/token",
+            {
+              client_id: UNSPLASH_ACCESS_KEY,
+              client_secret: UNSPLASH_SECRET_KEY,
+              redirect_uri: REDIRECT_URI,
+              code,
+              grant_type: "authorization_code",
+            }
+          );
+
+          setAccessToken(response.data.access_token);
+          // Remove the code from URL
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+        } catch (error) {
+          console.error("Error getting access token:", error);
+          alert("Failed to authenticate with Unsplash. Please try again.");
+        }
+      };
+
+      getAccessToken();
+    }
+  }, []);
 
   const handleSearch = () => {
     setSearchTerm(searchQuery);
@@ -119,6 +162,38 @@ const Unsplash = () => {
     window.open(url, "_blank");
   };
 
+  const handleLogin = () => {
+    window.location.href = OAUTH_URL;
+  };
+
+  const handleLike = async (imageId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!accessToken) {
+      alert("Please log in to like photos");
+      return;
+    }
+
+    try {
+      await axios.post(
+        `https://api.unsplash.com/photos/${imageId}/like`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      setLikedImages((prev) => new Set([...prev, imageId]));
+    } catch (error) {
+      console.error("Error liking image:", error);
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        alert("Your session has expired. Please log in again.");
+        setAccessToken(null);
+      }
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex gap-2">
@@ -140,6 +215,14 @@ const Unsplash = () => {
         >
           Search
         </button>
+        {!accessToken && (
+          <button
+            onClick={handleLogin}
+            className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            Login to Like Photos
+          </button>
+        )}
       </div>
 
       {isLoading && (
@@ -207,10 +290,21 @@ const Unsplash = () => {
                     {image.user.name}
                   </p>
                 </div>
-                <div className="flex items-center text-red-500">
-                  <Heart className="w-4 h-4 mr-1" />
+                <button
+                  onClick={(e) => handleLike(image.id, e)}
+                  className={`flex items-center ${
+                    likedImages.has(image.id)
+                      ? "text-red-500"
+                      : "text-gray-400 hover:text-red-500"
+                  } transition-colors`}
+                >
+                  <Heart
+                    className={`w-4 h-4 mr-1 ${
+                      likedImages.has(image.id) ? "fill-current" : ""
+                    }`}
+                  />
                   <span className="text-sm">{image.likes}</span>
-                </div>
+                </button>
               </div>
               <h3 className="text-lg font-bold text-gray-200 truncate">
                 {image.alt_description || "Untitled"}
