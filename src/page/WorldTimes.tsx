@@ -241,14 +241,19 @@ const WorldTimes = () => {
   };
 
   const formatTime = (datetime: string) => {
-    return new Date(datetime).toLocaleString("en-US", {
+    const date = new Date(datetime);
+    const timeString = date.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
+      second: "2-digit",
       hour12: true,
+    });
+    const dateString = date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       weekday: "long",
     });
+    return { timeString, dateString };
   };
 
   return (
@@ -376,9 +381,14 @@ const WorldTimes = () => {
               {selectedTime.timezone}
             </p>
             {displayMode === "text" ? (
-              <p className="text-gray-800 text-2xl font-bold">
-                {formatTime(selectedTime.datetime)}
-              </p>
+              <div className="space-y-4">
+                <div className="text-5xl font-mono font-bold text-gray-800 tracking-wider">
+                  {formatTime(selectedTime.datetime).timeString}
+                </div>
+                <div className="text-xl text-gray-600">
+                  {formatTime(selectedTime.datetime).dateString}
+                </div>
+              </div>
             ) : (
               <ClockDisplay datetime={selectedTime.datetime} />
             )}
