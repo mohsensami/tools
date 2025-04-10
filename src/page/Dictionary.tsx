@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Dictionary = () => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState("Hello");
 
   const getDictionaryData = async () => {
     const { data } = await axios(
@@ -27,7 +27,7 @@ const Dictionary = () => {
   const dictionaryResults = useQuery({
     queryKey: ["get-dictionary", query],
     queryFn: getDictionaryData,
-    enabled: false,
+    // enabled: false,
   });
 
   const handleSearch = (e: any) => {
