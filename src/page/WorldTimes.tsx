@@ -18,6 +18,91 @@ interface City {
   timezone: string;
 }
 
+const ClockDisplay: React.FC<{ datetime: string }> = ({ datetime }) => {
+  const [time, setTime] = useState(new Date(datetime));
+
+  useEffect(() => {
+    setTime(new Date(datetime));
+    const interval = setInterval(() => {
+      setTime(new Date(datetime));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [datetime]);
+
+  const hours = time.getHours();
+  const minutes = time.getMinutes();
+  const seconds = time.getSeconds();
+
+  const hourDegrees = ((hours % 12) + minutes / 60) * 30;
+  const minuteDegrees = (minutes + seconds / 60) * 6;
+  const secondDegrees = seconds * 6;
+
+  return (
+    <div className="relative w-64 h-64 mx-auto">
+      {/* Clock face */}
+      <div className="absolute inset-0 rounded-full border-8 border-gray-200 bg-white shadow-lg">
+        {/* Hour markers */}
+        {[...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-4 bg-gray-600"
+            style={{
+              left: "50%",
+              top: "0",
+              transform: `rotate(${i * 30}deg) translateY(-120px)`,
+              transformOrigin: "50% 120px",
+            }}
+          />
+        ))}
+
+        {/* Hands */}
+        <div
+          className="absolute w-2 h-20 bg-gray-800 rounded-full"
+          style={{
+            left: "50%",
+            top: "50%",
+            transform: `translate(-50%, -100%) rotate(${hourDegrees}deg)`,
+            transformOrigin: "50% 100%",
+          }}
+        />
+        <div
+          className="absolute w-1.5 h-24 bg-gray-600 rounded-full"
+          style={{
+            left: "50%",
+            top: "50%",
+            transform: `translate(-50%, -100%) rotate(${minuteDegrees}deg)`,
+            transformOrigin: "50% 100%",
+          }}
+        />
+        <div
+          className="absolute w-1 h-28 bg-red-500 rounded-full"
+          style={{
+            left: "50%",
+            top: "50%",
+            transform: `translate(-50%, -100%) rotate(${secondDegrees}deg)`,
+            transformOrigin: "50% 100%",
+          }}
+        />
+
+        {/* Center dot */}
+        <div
+          className="absolute w-4 h-4 bg-gray-800 rounded-full"
+          style={{
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+      </div>
+
+      {/* Digital time display */}
+      <div className="absolute bottom-0 left-0 right-0 text-center text-xl font-mono text-gray-700">
+        {time.toLocaleTimeString()}
+      </div>
+    </div>
+  );
+};
+
 const WorldTimes = () => {
   const [selectedTime, setSelectedTime] = useState<TimeZone | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,6 +113,7 @@ const WorldTimes = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [loadingCountries, setLoadingCountries] = useState(true);
   const [loadingCities, setLoadingCities] = useState(false);
+  const [displayMode, setDisplayMode] = useState<"text" | "clock">("text");
 
   // Fetch all countries
   const fetchCountries = async () => {
@@ -241,6 +327,32 @@ const WorldTimes = () => {
         </button>
       </div>
 
+      {/* Display mode toggle */}
+      <div className="flex justify-center mb-6">
+        <div className="inline-flex rounded-lg border border-gray-200 p-1">
+          <button
+            onClick={() => setDisplayMode("text")}
+            className={`px-4 py-2 rounded-md text-sm font-medium ${
+              displayMode === "text"
+                ? "bg-blue-500 text-white"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Text
+          </button>
+          <button
+            onClick={() => setDisplayMode("clock")}
+            className={`px-4 py-2 rounded-md text-sm font-medium ${
+              displayMode === "clock"
+                ? "bg-blue-500 text-white"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Clock
+          </button>
+        </div>
+      </div>
+
       {(loading || loadingCountries || loadingCities) && (
         <div className="text-center py-5">Loading time...</div>
       )}
@@ -263,9 +375,13 @@ const WorldTimes = () => {
             <p className="text-gray-500 text-sm mb-3">
               {selectedTime.timezone}
             </p>
-            <p className="text-gray-800 text-2xl font-bold">
-              {formatTime(selectedTime.datetime)}
-            </p>
+            {displayMode === "text" ? (
+              <p className="text-gray-800 text-2xl font-bold">
+                {formatTime(selectedTime.datetime)}
+              </p>
+            ) : (
+              <ClockDisplay datetime={selectedTime.datetime} />
+            )}
           </div>
         )}
     </div>
