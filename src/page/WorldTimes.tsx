@@ -202,21 +202,16 @@ const WorldTimes = () => {
   const fetchTime = async (timezone: string) => {
     setLoading(true);
     setError("");
-    try {
-      const response = await axios.get(
-        `https://timeapi.io/api/Time/current/zone?timeZone=${timezone}`
-      );
-      setSelectedTime({
-        timezone: timezone,
-        datetime: response.data.dateTime,
-        country_code: selectedCity,
-      });
-    } catch (err) {
-      setError("Failed to fetch time. Please try again later.");
-      console.error("Error fetching time:", err);
-    } finally {
-      setLoading(false);
-    }
+
+    const response = await axios.get(
+      `https://timeapi.io/api/Time/current/zone?timeZone=${timezone}`
+    );
+    setLoading(false);
+    setSelectedTime({
+      timezone: timezone,
+      datetime: response.data.dateTime,
+      country_code: selectedCity,
+    });
   };
 
   useEffect(() => {
@@ -316,19 +311,20 @@ const WorldTimes = () => {
               fetchTime(city.timezone);
             }
           }}
-          disabled={
-            loading || loadingCities || !selectedCountry || !selectedCity
-          }
+          // disabled={
+          //   loading || loadingCities || !selectedCountry || !selectedCity
+          // }
           className={`
             px-5 py-3 rounded-lg text-white text-base transition-colors
             ${
-              loading || loadingCities || !selectedCountry || !selectedCity
-                ? "bg-gray-400 cursor-not-allowed"
+              loadingCities || !selectedCountry || !selectedCity
+                ? "bg-gray-400 "
                 : "bg-blue-500 hover:bg-blue-600 cursor-pointer"
             }
           `}
         >
-          {loading ? "Refreshing..." : "Get Time"}
+          Get Time
+          {/* {loading ? "Refreshing..." : "Get Time"} */}
         </button>
       </div>
 
@@ -358,7 +354,7 @@ const WorldTimes = () => {
         </div>
       </div>
 
-      {(loading || loadingCountries || loadingCities) && (
+      {(loadingCountries || loadingCities) && (
         <div className="text-center py-5">Loading time...</div>
       )}
 
