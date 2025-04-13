@@ -69,6 +69,16 @@ const countries = [
   { code: "za", name: "South Africa" },
 ];
 
+const categories = [
+  { code: "business", name: "Business" },
+  { code: "entertainment", name: "Entertainment" },
+  { code: "general", name: "General" },
+  { code: "health", name: "Health" },
+  { code: "science", name: "Science" },
+  { code: "sports", name: "Sports" },
+  { code: "technology", name: "Technology" },
+];
+
 const News = () => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -76,13 +86,14 @@ const News = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedCountry, setSelectedCountry] = useState("us");
+  const [selectedCategory, setSelectedCategory] = useState("business");
   const articlesPerPage = 6;
 
-  const fetchNews = async (country: string) => {
+  const fetchNews = async (country: string, category: string) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://newsapi.org/v2/top-headlines?country=${country}&apiKey=${
+        `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&apiKey=${
           import.meta.env.VITE_APP_NEWS_API_KEY
         }`
       );
@@ -96,12 +107,19 @@ const News = () => {
   };
 
   useEffect(() => {
-    fetchNews(selectedCountry);
-  }, [selectedCountry]);
+    fetchNews(selectedCountry, selectedCategory);
+  }, [selectedCountry, selectedCategory]);
 
   const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCountry(event.target.value);
-    setCurrentPage(1); // Reset to first page when country changes
+    setCurrentPage(1);
+  };
+
+  const handleCategoryChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedCategory(event.target.value);
+    setCurrentPage(1);
   };
 
   const indexOfLastArticle = currentPage * articlesPerPage;
@@ -133,24 +151,43 @@ const News = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 space-y-4 md:space-y-0">
         <h1 className="text-3xl text-white font-bold">Latest News</h1>
-        <div className="flex items-center space-x-4">
-          <label htmlFor="country-select" className="text-white">
-            Select Country:
-          </label>
-          <select
-            id="country-select"
-            value={selectedCountry}
-            onChange={handleCountryChange}
-            className="bg-white text-gray-800 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {countries.map((country) => (
-              <option key={country.code} value={country.code}>
-                {country.name}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-4">
+          <div className="flex items-center space-x-4">
+            <label htmlFor="country-select" className="text-white">
+              Country:
+            </label>
+            <select
+              id="country-select"
+              value={selectedCountry}
+              onChange={handleCountryChange}
+              className="bg-white text-gray-800 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {countries.map((country) => (
+                <option key={country.code} value={country.code}>
+                  {country.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center space-x-4">
+            <label htmlFor="category-select" className="text-white">
+              Category:
+            </label>
+            <select
+              id="category-select"
+              value={selectedCategory}
+              onChange={handleCategoryChange}
+              className="bg-white text-gray-800 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {categories.map((category) => (
+                <option key={category.code} value={category.code}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
