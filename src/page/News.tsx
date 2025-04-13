@@ -87,15 +87,21 @@ const News = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedCountry, setSelectedCountry] = useState("us");
   const [selectedCategory, setSelectedCategory] = useState("business");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const articlesPerPage = 6;
 
-  const fetchNews = async (country: string, category: string) => {
+  const fetchNews = async (
+    country: string,
+    category: string,
+    query: string
+  ) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&apiKey=${
-          import.meta.env.VITE_APP_NEWS_API_KEY
-        }`
+        `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}${
+          query ? `&q=${encodeURIComponent(query)}` : ""
+        }&apiKey=${import.meta.env.VITE_APP_NEWS_API_KEY}`
       );
       setArticles(response.data.articles);
       setTotalPages(Math.ceil(response.data.articles.length / articlesPerPage));
@@ -107,8 +113,8 @@ const News = () => {
   };
 
   useEffect(() => {
-    fetchNews(selectedCountry, selectedCategory);
-  }, [selectedCountry, selectedCategory]);
+    fetchNews(selectedCountry, selectedCategory, searchTerm);
+  }, [selectedCountry, selectedCategory, searchTerm]);
 
   const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCountry(event.target.value);
@@ -119,6 +125,12 @@ const News = () => {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setSelectedCategory(event.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSearchTerm(searchQuery);
     setCurrentPage(1);
   };
 
@@ -151,8 +163,25 @@ const News = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 space-y-4 md:space-y-0">
+      <div className="flex flex-col space-y-4 mb-8">
         <h1 className="text-3xl text-white font-bold">Latest News</h1>
+        <form onSubmit={handleSearch} className="w-full max-w-md">
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search news..."
+              className="flex-1 bg-white text-gray-800 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
+            >
+              Search
+            </button>
+          </div>
+        </form>
         <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-4">
           <div className="flex items-center space-x-4">
             <label htmlFor="country-select" className="text-white">
