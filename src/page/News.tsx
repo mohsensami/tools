@@ -12,36 +12,97 @@ interface NewsArticle {
   };
 }
 
+const countries = [
+  { code: "ae", name: "UAE" },
+  { code: "ar", name: "Argentina" },
+  { code: "at", name: "Austria" },
+  { code: "au", name: "Australia" },
+  { code: "be", name: "Belgium" },
+  { code: "bg", name: "Bulgaria" },
+  { code: "br", name: "Brazil" },
+  { code: "ca", name: "Canada" },
+  { code: "ch", name: "Switzerland" },
+  { code: "cn", name: "China" },
+  { code: "co", name: "Colombia" },
+  { code: "cu", name: "Cuba" },
+  { code: "cz", name: "Czech Republic" },
+  { code: "de", name: "Germany" },
+  { code: "eg", name: "Egypt" },
+  { code: "fr", name: "France" },
+  { code: "gb", name: "United Kingdom" },
+  { code: "gr", name: "Greece" },
+  { code: "hk", name: "Hong Kong" },
+  { code: "hu", name: "Hungary" },
+  { code: "id", name: "Indonesia" },
+  { code: "ie", name: "Ireland" },
+  { code: "il", name: "Israel" },
+  { code: "in", name: "India" },
+  { code: "it", name: "Italy" },
+  { code: "jp", name: "Japan" },
+  { code: "kr", name: "South Korea" },
+  { code: "lt", name: "Lithuania" },
+  { code: "lv", name: "Latvia" },
+  { code: "ma", name: "Morocco" },
+  { code: "mx", name: "Mexico" },
+  { code: "my", name: "Malaysia" },
+  { code: "ng", name: "Nigeria" },
+  { code: "nl", name: "Netherlands" },
+  { code: "no", name: "Norway" },
+  { code: "nz", name: "New Zealand" },
+  { code: "ph", name: "Philippines" },
+  { code: "pl", name: "Poland" },
+  { code: "pt", name: "Portugal" },
+  { code: "ro", name: "Romania" },
+  { code: "rs", name: "Serbia" },
+  { code: "ru", name: "Russia" },
+  { code: "sa", name: "Saudi Arabia" },
+  { code: "se", name: "Sweden" },
+  { code: "sg", name: "Singapore" },
+  { code: "si", name: "Slovenia" },
+  { code: "sk", name: "Slovakia" },
+  { code: "th", name: "Thailand" },
+  { code: "tr", name: "Turkey" },
+  { code: "tw", name: "Taiwan" },
+  { code: "ua", name: "Ukraine" },
+  { code: "us", name: "United States" },
+  { code: "ve", name: "Venezuela" },
+  { code: "za", name: "South Africa" },
+];
+
 const News = () => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedCountry, setSelectedCountry] = useState("us");
   const articlesPerPage = 6;
 
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        // You need to replace 'YOUR_API_KEY' with your actual NewsAPI key
-        const response = await axios.get(
-          `https://newsapi.org/v2/top-headlines?country=us&apiKey=${
-            import.meta.env.VITE_APP_NEWS_API_KEY
-          }`
-        );
-        setArticles(response.data.articles);
-        setTotalPages(
-          Math.ceil(response.data.articles.length / articlesPerPage)
-        );
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to fetch news articles");
-        setLoading(false);
-      }
-    };
+  const fetchNews = async (country: string) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `https://newsapi.org/v2/top-headlines?country=${country}&apiKey=${
+          import.meta.env.VITE_APP_NEWS_API_KEY
+        }`
+      );
+      setArticles(response.data.articles);
+      setTotalPages(Math.ceil(response.data.articles.length / articlesPerPage));
+      setLoading(false);
+    } catch (err) {
+      setError("Failed to fetch news articles");
+      setLoading(false);
+    }
+  };
 
-    fetchNews();
-  }, []);
+  useEffect(() => {
+    fetchNews(selectedCountry);
+  }, [selectedCountry]);
+
+  const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCountry(event.target.value);
+    setCurrentPage(1); // Reset to first page when country changes
+  };
 
   const indexOfLastArticle = currentPage * articlesPerPage;
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
@@ -72,7 +133,26 @@ const News = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Latest News</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl text-white font-bold">Latest News</h1>
+        <div className="flex items-center space-x-4">
+          <label htmlFor="country-select" className="text-white">
+            Select Country:
+          </label>
+          <select
+            id="country-select"
+            value={selectedCountry}
+            onChange={handleCountryChange}
+            className="bg-white text-gray-800 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {countries.map((country) => (
+              <option key={country.code} value={country.code}>
+                {country.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentArticles.map((article, index) => (
           <div
