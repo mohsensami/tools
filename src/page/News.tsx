@@ -147,128 +147,149 @@ const News = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex justify-center items-center min-h-screen bg-gray-900">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen text-red-500">
-        {error}
+      <div className="flex justify-center items-center min-h-screen bg-gray-900">
+        <div className="bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg">
+          {error}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col space-y-4 mb-8">
-        <h1 className="text-3xl text-white font-bold">Latest News</h1>
-        <form onSubmit={handleSearch} className="w-full max-w-md">
-          <div className="flex items-center space-x-2">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search news..."
-              className="flex-1 bg-white text-gray-800 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
-            >
-              Search
-            </button>
-          </div>
-        </form>
-        <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-4">
-          <div className="flex items-center space-x-4">
-            <label htmlFor="country-select" className="text-white">
-              Country:
-            </label>
-            <select
-              id="country-select"
-              value={selectedCountry}
-              onChange={handleCountryChange}
-              className="bg-white text-gray-800 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {countries.map((country) => (
-                <option key={country.code} value={country.code}>
-                  {country.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center space-x-4">
-            <label htmlFor="category-select" className="text-white">
-              Category:
-            </label>
-            <select
-              id="category-select"
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-              className="bg-white text-gray-800 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {categories.map((category) => (
-                <option key={category.code} value={category.code}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {currentArticles.map((article, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-          >
-            {article.urlToImage && (
-              <img
-                src={article.urlToImage}
-                alt={article.title}
-                className="w-full h-48 object-cover"
+    <div className="min-h-screen bg-gray-500 text-gray-100">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header Section */}
+        <div className="mb-8 space-y-6">
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+            Latest News
+          </h1>
+
+          {/* Search Bar */}
+          <form onSubmit={handleSearch} className="w-full max-w-2xl">
+            <div className="flex items-center space-x-2">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search news..."
+                className="flex-1 bg-gray-800 text-white px-6 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-700"
               />
-            )}
-            <div className="p-4">
-              <h2 className="text-xl font-semibold mb-2">{article.title}</h2>
-              <p className="text-gray-600 mb-4">{article.description}</p>
-              <div className="flex justify-between items-center text-sm text-gray-500">
-                <span>{article.source.name}</span>
-                <span>
-                  {new Date(article.publishedAt).toLocaleDateString()}
-                </span>
-              </div>
-              <a
-                href={article.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-300"
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
               >
-                Read More
-              </a>
+                Search
+              </button>
+            </div>
+          </form>
+
+          {/* Filters */}
+          <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
+            <div className="flex items-center space-x-4">
+              <label htmlFor="country-select" className="text-gray-300">
+                Country:
+              </label>
+              <select
+                id="country-select"
+                value={selectedCountry}
+                onChange={handleCountryChange}
+                className="bg-gray-800 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-700"
+              >
+                {countries.map((country) => (
+                  <option key={country.code} value={country.code}>
+                    {country.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center space-x-4">
+              <label htmlFor="category-select" className="text-gray-300">
+                Category:
+              </label>
+              <select
+                id="category-select"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                className="bg-gray-800 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-700"
+              >
+                {categories.map((category) => (
+                  <option key={category.code} value={category.code}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Pagination Controls */}
-      <div className="flex justify-center items-center mt-8 space-x-2">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button
-            key={page}
-            onClick={() => handlePageChange(page)}
-            className={`px-4 py-2 rounded-md ${
-              currentPage === page
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            } transition-colors duration-300`}
-          >
-            {page}
-          </button>
-        ))}
+        {/* News Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {currentArticles.map((article, index) => (
+            <div
+              key={index}
+              className="bg-gray-800 rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+            >
+              {article.urlToImage && (
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={article.urlToImage}
+                    alt={article.title}
+                    className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+              )}
+              <div className="p-6">
+                <h2 className="text-xl font-bold mb-3 text-white hover:text-blue-400 transition-colors duration-300">
+                  {article.title}
+                </h2>
+                <p className="text-gray-400 mb-4 line-clamp-3">
+                  {article.description}
+                </p>
+                <div className="flex justify-between items-center text-sm text-gray-500 mb-4">
+                  <span className="bg-gray-700 px-3 py-1 rounded-full">
+                    {article.source.name}
+                  </span>
+                  <span>
+                    {new Date(article.publishedAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <a
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full text-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
+                >
+                  Read More
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-center items-center mt-12 space-x-2">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePageChange(page)}
+              className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                currentPage === page
+                  ? "bg-blue-600 text-white transform scale-110"
+                  : "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
