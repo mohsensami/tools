@@ -130,6 +130,20 @@ const Unsplash = () => {
     }
   }, []);
 
+  // Add effect to handle body scroll locking
+  useEffect(() => {
+    if (selectedImage) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    // Cleanup function to restore scroll when component unmounts
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedImage]);
+
   const handleSearch = () => {
     setSearchTerm(searchQuery);
   };
