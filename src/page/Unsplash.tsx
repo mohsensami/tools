@@ -35,6 +35,7 @@ interface UnsplashImage {
     };
   };
   likes: number;
+  downloads: number;
   description?: string;
   width: number;
   height: number;
@@ -335,11 +336,14 @@ const Unsplash = () => {
                 <span>
                   {image.width} × {image.height}
                 </span>
-                {image.location?.name && (
-                  <span className="truncate max-w-[150px]">
-                    📍 {image.location.name}
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  <span>📥 {image.downloads}</span>
+                  {image.location?.name && (
+                    <span className="truncate max-w-[150px]">
+                      📍 {image.location.name}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
