@@ -11,19 +11,22 @@ import {
   BookA,
   Clock,
   Newspaper,
+  SquareStack,
+  Bitcoin,
 } from "lucide-react";
 
 const menu = [
   { name: "Home", icon: <House />, link: "/" },
   { name: "Movies", icon: <Clapperboard />, link: "/movies" },
   { name: "PowerSupply", icon: <Cable />, link: "/power-supply-calculator" },
+  { name: "Crypto", icon: <Bitcoin />, link: "/crypto" },
   { name: "Weather", icon: <CloudHail />, link: "/weather" },
   { name: "Dictionary", icon: <BookA />, link: "/dictionary" },
   { name: "Qr-code", icon: <QrCode />, link: "/qr-code" },
   { name: "Times", icon: <Clock />, link: "/times" },
   { name: "News", icon: <Newspaper />, link: "/news" },
   { name: "Unsplash", icon: <Camera />, link: "/unsplash" },
-  { name: "Lorem", icon: <Camera />, link: "/lorem" },
+  { name: "Lorem", icon: <SquareStack />, link: "/lorem" },
 ];
 
 const Sidebar = () => {
