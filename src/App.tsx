@@ -15,6 +15,7 @@ import { QrCode } from "./page/QrCode";
 import News from "./page/News";
 import Crypto from "./page/Crypto";
 import Unsplash from "./page/Unsplash";
+import Lorem from "./page/Lorem";
 
 function App() {
   const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ function App() {
             <Route path="/news" element={<News />} />
             <Route path="/crypto" element={<Crypto />} />
             <Route path="/unsplash" element={<Unsplash />} />
+            <Route path="/lorem" element={<Lorem />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
