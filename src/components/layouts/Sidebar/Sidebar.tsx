@@ -27,6 +27,7 @@ const menu = [
   { name: "News", icon: <Newspaper />, link: "/news" },
   { name: "Unsplash", icon: <Camera />, link: "/unsplash" },
   { name: "Lorem", icon: <SquareStack />, link: "/lorem" },
+  { name: "Paint", icon: <SquareStack />, link: "/paint" },
 ];
 
 const Sidebar = () => {
