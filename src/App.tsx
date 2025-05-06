@@ -16,7 +16,7 @@ import News from "./page/News";
 import Crypto from "./page/Crypto";
 import Unsplash from "./page/Unsplash";
 import Lorem from "./page/Lorem";
-import Paint from "./page/Paint";
+import Photoshop from "./page/Photoshop";
 
 function App() {
   const queryClient = new QueryClient();
@@ -37,7 +37,7 @@ function App() {
             <Route path="/crypto" element={<Crypto />} />
             <Route path="/unsplash" element={<Unsplash />} />
             <Route path="/lorem" element={<Lorem />} />
-            <Route path="/paint" element={<Paint />} />
+            <Route path="/photoshop" element={<Photoshop />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
