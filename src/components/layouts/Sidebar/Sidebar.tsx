@@ -14,6 +14,7 @@ import {
   SquareStack,
   Bitcoin,
   Image,
+  Brush,
 } from "lucide-react";
 
 const menu = [
@@ -29,6 +30,7 @@ const menu = [
   { name: "Unsplash", icon: <Camera />, link: "/unsplash" },
   { name: "Lorem", icon: <SquareStack />, link: "/lorem" },
   { name: "Photoshop", icon: <Image />, link: "/photoshop" },
+  { name: "Paint", icon: <Brush />, link: "/paint" },
 ];
 
 const Sidebar = () => {
