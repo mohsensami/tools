@@ -37,15 +37,17 @@ const Sidebar = () => {
   return (
     <div
       id="sidebar"
-      className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800"
+      className="h-full px-3 py-4 overflow-y-auto bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm"
     >
-      <Logo />
-      <ul className="space-y-2 font-medium">
-        <li>
-          {menu.map((item) => (
+      <div className="mb-6">
+        <Logo />
+      </div>
+      <ul className="space-y-1 font-medium">
+        {menu.map((item) => (
+          <li key={item.link}>
             <MenuItem name={item.name} icon={item.icon} link={item.link} />
-          ))}
-        </li>
+          </li>
+        ))}
       </ul>
     </div>
   );
