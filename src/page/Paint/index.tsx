@@ -129,7 +129,7 @@ const Paint = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="md:flex md:h-screen bg-gray-100">
       {/* Tools Panel */}
       <div className="w-[300px] p-4 bg-white shadow-lg">
         <h2 className="text-2xl font-bold mb-4">Paint Tools</h2>
