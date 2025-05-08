@@ -189,7 +189,7 @@ const Paint = () => {
       <div className="flex-1 p-4">
         <canvas
           ref={canvasRef}
-          className="border border-gray-300 bg-white shadow-sm"
+          className="border border-gray-300 bg-white shadow-sm w-full"
           onMouseDown={startDrawing}
           onMouseMove={draw}
           onMouseUp={stopDrawing}
