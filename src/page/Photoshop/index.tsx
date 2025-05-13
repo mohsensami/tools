@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RotateCcw, RotateCw, Download, Upload } from "lucide-react";
+import { RotateCcw, RotateCw, Download, Upload, Crop } from "lucide-react";
 
 const Paint: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -10,6 +10,11 @@ const Paint: React.FC = () => {
   const [isBlackAndWhite, setIsBlackAndWhite] = useState<boolean>(false);
   const [brightness, setBrightness] = useState<number>(100);
   const [contrast, setContrast] = useState<number>(100);
+  const [isCropping, setIsCropping] = useState<boolean>(false);
+  const [cropStart, setCropStart] = useState<{ x: number; y: number } | null>(
+    null
+  );
+  const [cropEnd, setCropEnd] = useState<{ x: number; y: number } | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -41,6 +46,66 @@ const Paint: React.FC = () => {
       link.href = canvasRef.current.toDataURL();
       link.click();
     }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isCropping) return;
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setCropStart({ x, y });
+    setCropEnd({ x, y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isCropping || !cropStart) return;
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setCropEnd({ x, y });
+    applyFilters();
+  };
+
+  const handleMouseUp = () => {
+    if (!isCropping || !cropStart || !cropEnd) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+    if (!tempCtx) return;
+
+    const width = Math.abs(cropEnd.x - cropStart.x);
+    const height = Math.abs(cropEnd.y - cropStart.y);
+
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+
+    const sourceX = Math.min(cropStart.x, cropEnd.x);
+    const sourceY = Math.min(cropStart.y, cropEnd.y);
+
+    tempCtx.drawImage(
+      canvas,
+      sourceX,
+      sourceY,
+      width,
+      height,
+      0,
+      0,
+      width,
+      height
+    );
+
+    const croppedImageUrl = tempCanvas.toDataURL();
+    setImageUrl(croppedImageUrl);
+    setIsCropping(false);
+    setCropStart(null);
+    setCropEnd(null);
   };
 
   const applyFilters = () => {
@@ -83,6 +148,15 @@ const Paint: React.FC = () => {
         ctx.filter = `brightness(${brightness}%) contrast(${contrast}%)`;
         ctx.drawImage(img, 0, 0);
 
+        // Draw crop selection if cropping
+        if (isCropping && cropStart && cropEnd) {
+          ctx.strokeStyle = "#00ff00";
+          ctx.lineWidth = 2;
+          const width = cropEnd.x - cropStart.x;
+          const height = cropEnd.y - cropStart.y;
+          ctx.strokeRect(cropStart.x, cropStart.y, width, height);
+        }
+
         ctx.restore();
       };
       img.src = imageUrl;
@@ -123,7 +197,11 @@ const Paint: React.FC = () => {
               <div className="flex justify-center bg-muted/50 p-4 rounded-lg">
                 <canvas
                   ref={canvasRef}
-                  className="max-w-full h-auto border rounded-md"
+                  className="max-w-full h-auto border rounded-md cursor-crosshair"
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
                 />
               </div>
 
@@ -149,6 +227,14 @@ const Paint: React.FC = () => {
                   onClick={() => setIsBlackAndWhite(!isBlackAndWhite)}
                 >
                   {isBlackAndWhite ? "Color" : "Black & White"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsCropping(!isCropping)}
+                  className="gap-2"
+                >
+                  <Crop className="h-4 w-4" />
+                  {isCropping ? "Cancel Crop" : "Crop"}
                 </Button>
                 <Button
                   variant="outline"
