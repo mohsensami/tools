@@ -42,46 +42,54 @@ const Paint = () => {
     return () => window.removeEventListener("resize", resizeCanvas);
   }, []);
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    setIsDrawing(true);
-    setStartPoint({ x, y });
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.strokeStyle = currentTool === "eraser" ? "#ffffff" : color;
-    ctx.lineWidth = brushSize;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-  };
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    if (currentTool === "brush" || currentTool === "eraser") {
-      ctx.lineTo(x, y);
-      ctx.stroke();
-    }
-  };
+  const getCoordinates = (e: React.MouseEvent<HTMLCanvasElement>) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return { x: 0, y: 0 };
+  
+      const rect = canvas.getBoundingClientRect();
+      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  
+      return {
+        x: e.pageX - (rect.left + scrollLeft),
+        y: e.pageY - (rect.top + scrollTop)
+      };
+    };
+  
+    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+  
+      const { x, y } = getCoordinates(e);
+      setIsDrawing(true);
+      setStartPoint({ x, y });
+  
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+  
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.strokeStyle = currentTool === "eraser" ? "#ffffff" : color;
+      ctx.lineWidth = brushSize;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+    };
+  
+    const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (!isDrawing) return;
+  
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+  
+      const { x, y } = getCoordinates(e);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+  
+      if (currentTool === "brush" || currentTool === "eraser") {
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
+    };
 
   const stopDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return;
@@ -89,10 +97,7 @@ const Paint = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
+    const { x, y } = getCoordinates(e);
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -190,6 +195,21 @@ const Paint = () => {
         <canvas
           ref={canvasRef}
           className="border border-gray-300 bg-white shadow-sm w-full"
+          style={{
+            cursor: isDrawing
+              ? currentTool === "brush" || currentTool === "eraser"
+                ? "crosshair"
+                : "move"
+              : currentTool === "brush"
+              ? "crosshair"
+              : currentTool === "eraser"
+              ? "cell"
+              : currentTool === "line"
+              ? "crosshair"
+              : currentTool === "rectangle" || currentTool === "circle"
+              ? "crosshair"
+              : "default"
+          }}
           onMouseDown={startDrawing}
           onMouseMove={draw}
           onMouseUp={stopDrawing}
