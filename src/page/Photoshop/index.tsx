@@ -168,19 +168,25 @@ const Paint: React.FC = () => {
   }, [imageUrl, rotation, isBlackAndWhite, brightness, contrast]);
 
   return (
-    <div className="container mx-auto p-4 max-w-6xl">
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Image Editor</CardTitle>
+    <div className="container mx-auto p-6 max-w-6xl min-h-screen bg-gray-50">
+      <Card className="w-full shadow-xl">
+        <CardHeader className="border-b bg-white/50">
+          <CardTitle className="text-3xl font-bold text-gray-800">
+            Image Editor
+          </CardTitle>
+          <p className="text-gray-500 mt-1">
+            Edit and enhance your images with powerful tools
+          </p>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-8 p-6">
           <div className="flex justify-center">
             <Button
-              variant="outline"
-              className="gap-2"
+              variant="default"
+              size="lg"
+              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
               onClick={triggerFileInput}
             >
-              <Upload className="h-4 w-4" />
+              <Upload className="h-5 w-5" />
               Upload Image
             </Button>
             <input
@@ -194,10 +200,10 @@ const Paint: React.FC = () => {
 
           {imageUrl && (
             <>
-              <div className="flex justify-center bg-muted/50 p-4 rounded-lg">
+              <div className="flex justify-center bg-gray-100 p-6 rounded-xl">
                 <canvas
                   ref={canvasRef}
-                  className="max-w-full h-auto border rounded-md cursor-crosshair"
+                  className="max-w-full h-auto border-2 border-gray-200 rounded-lg shadow-lg cursor-crosshair bg-white"
                   onMouseDown={handleMouseDown}
                   onMouseMove={handleMouseMove}
                   onMouseUp={handleMouseUp}
@@ -205,69 +211,91 @@ const Paint: React.FC = () => {
                 />
               </div>
 
-              <div className="flex flex-wrap gap-4 justify-center">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleRotate("left")}
-                  className="h-10 w-10"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleRotate("right")}
-                  className="h-10 w-10"
-                >
-                  <RotateCw className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsBlackAndWhite(!isBlackAndWhite)}
-                >
-                  {isBlackAndWhite ? "Color" : "Black & White"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsCropping(!isCropping)}
-                  className="gap-2"
-                >
-                  <Crop className="h-4 w-4" />
-                  {isCropping ? "Cancel Crop" : "Crop"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleDownload}
-                  className="gap-2"
-                >
-                  <Download className="h-4 w-4" />
-                  Download
-                </Button>
-              </div>
-
-              <div className="space-y-6 px-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Brightness</label>
-                  <Slider
-                    value={[brightness]}
-                    onValueChange={(value: number[]) => setBrightness(value[0])}
-                    min={0}
-                    max={200}
-                    step={1}
-                    className="w-full"
-                  />
+              <div className="space-y-8">
+                <div className="flex flex-wrap gap-3 justify-center">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleRotate("left")}
+                    className="h-12 w-12 border-2 hover:bg-gray-100 transition-colors"
+                  >
+                    <RotateCcw className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleRotate("right")}
+                    className="h-12 w-12 border-2 hover:bg-gray-100 transition-colors"
+                  >
+                    <RotateCw className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => setIsBlackAndWhite(!isBlackAndWhite)}
+                    className="border-2 hover:bg-gray-100 transition-colors"
+                  >
+                    {isBlackAndWhite ? "Color" : "Black & White"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => setIsCropping(!isCropping)}
+                    className="gap-2 border-2 hover:bg-gray-100 transition-colors"
+                  >
+                    <Crop className="h-5 w-5" />
+                    {isCropping ? "Cancel Crop" : "Crop"}
+                  </Button>
+                  <Button
+                    variant="default"
+                    size="lg"
+                    onClick={handleDownload}
+                    className="gap-2 bg-green-600 hover:bg-green-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
+                  >
+                    <Download className="h-5 w-5" />
+                    Download
+                  </Button>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Contrast</label>
-                  <Slider
-                    value={[contrast]}
-                    onValueChange={(value: number[]) => setContrast(value[0])}
-                    min={0}
-                    max={200}
-                    step={1}
-                    className="w-full"
-                  />
+
+                <div className="h-px bg-gray-200 my-8" />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700 flex items-center justify-between">
+                        Brightness
+                        <span className="text-gray-500">{brightness}%</span>
+                      </label>
+                      <Slider
+                        value={[brightness]}
+                        onValueChange={(value: number[]) =>
+                          setBrightness(value[0])
+                        }
+                        min={0}
+                        max={200}
+                        step={1}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700 flex items-center justify-between">
+                        Contrast
+                        <span className="text-gray-500">{contrast}%</span>
+                      </label>
+                      <Slider
+                        value={[contrast]}
+                        onValueChange={(value: number[]) =>
+                          setContrast(value[0])
+                        }
+                        min={0}
+                        max={200}
+                        step={1}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </>
