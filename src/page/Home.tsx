@@ -1,10 +1,26 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
-const Home = () => {
-  const [time, setTime] = useState(new Date());
-  const [greeting, setGreeting] = useState("");
-  const [weather, setWeather] = useState({ temp: "72°", condition: "Sunny" });
-  const [quote, setQuote] = useState(
+interface Weather {
+  temp: string;
+  condition: "Sunny" | "Rainy" | "Cloudy";
+}
+
+interface QuickAction {
+  icon: string;
+  label: string;
+  action: () => void;
+  color: string;
+}
+
+const Home: React.FC = () => {
+  const [time, setTime] = useState<Date>(new Date());
+  const [greeting, setGreeting] = useState<string>("");
+  const [weather, setWeather] = useState<Weather>({
+    temp: "72°",
+    condition: "Sunny",
+  });
+  const [quote, setQuote] = useState<string>(
     "The only way to do great work is to love what you do."
   );
 
@@ -19,7 +35,7 @@ const Home = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const updateGreeting = (now) => {
+  const updateGreeting = (now: Date): void => {
     const hours = now.getHours();
     let newGreeting = "";
 
@@ -30,11 +46,11 @@ const Home = () => {
     setGreeting(newGreeting);
   };
 
-  const formatTime = (date) => {
+  const formatTime = (date: Date): string => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
-  const formatDate = (date) => {
+  const formatDate = (date: Date): string => {
     return date.toLocaleDateString([], {
       weekday: "long",
       month: "long",
@@ -42,77 +58,122 @@ const Home = () => {
     });
   };
 
-  // Quick action buttons
-  const quickActions = [
+  // Quick action buttons with colors
+  const quickActions: QuickAction[] = [
     {
       icon: "📅",
       label: "Calendar",
       action: () => console.log("Calendar clicked"),
+      color: "from-blue-400 to-blue-600",
     },
-    { icon: "📝", label: "Notes", action: () => console.log("Notes clicked") },
-    { icon: "🎵", label: "Music", action: () => console.log("Music clicked") },
+    {
+      icon: "📝",
+      label: "Notes",
+      action: () => console.log("Notes clicked"),
+      color: "from-purple-400 to-purple-600",
+    },
+    {
+      icon: "🎵",
+      label: "Music",
+      action: () => console.log("Music clicked"),
+      color: "from-pink-400 to-pink-600",
+    },
     {
       icon: "☀️",
       label: "Weather",
       action: () => console.log("Weather clicked"),
+      color: "from-yellow-400 to-yellow-600",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-8 flex flex-col">
       {/* Header with greeting and weather */}
-      <div className="flex justify-between items-start mb-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex justify-between items-start mb-12"
+      >
         <div>
-          <h1 className="text-4xl font-bold text-gray-800">{greeting}</h1>
-          <p className="text-lg text-gray-600">Welcome back!</p>
+          <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+            {greeting}
+          </h1>
+          <p className="text-xl text-gray-600 mt-2">Welcome back!</p>
         </div>
-        <div className="bg-white bg-opacity-70 rounded-lg p-3 shadow-sm flex items-center">
-          <span className="text-3xl mr-2">
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg flex items-center space-x-3"
+        >
+          <span className="text-4xl">
             {weather.condition === "Sunny"
               ? "☀️"
               : weather.condition === "Rainy"
               ? "🌧️"
               : "⛅"}
           </span>
-          <span className="text-2xl font-semibold">{weather.temp}</span>
-        </div>
-      </div>
+          <div>
+            <span className="text-3xl font-bold text-gray-800">
+              {weather.temp}
+            </span>
+            <p className="text-sm text-gray-600">{weather.condition}</p>
+          </div>
+        </motion.div>
+      </motion.div>
 
       {/* Main clock and date */}
       <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="text-center mb-8">
-          <div className="text-8xl font-light text-gray-800 mb-2">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center mb-12"
+        >
+          <div className="text-9xl font-light bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 mb-4">
             {formatTime(time)}
           </div>
-          <div className="text-2xl text-gray-600">{formatDate(time)}</div>
-        </div>
+          <div className="text-3xl text-gray-600 font-medium">
+            {formatDate(time)}
+          </div>
+        </motion.div>
 
         {/* Inspirational quote */}
-        <div className="max-w-md bg-white bg-opacity-70 rounded-xl p-4 shadow-sm mb-12">
-          <p className="text-gray-700 italic text-center">"{quote}"</p>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-2xl bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg mb-16"
+        >
+          <p className="text-xl text-gray-700 italic text-center leading-relaxed">
+            "{quote}"
+          </p>
+        </motion.div>
 
         {/* Quick actions */}
-        <div className="grid grid-cols-4 gap-4 w-full max-w-lg">
+        <div className="grid grid-cols-4 gap-6 w-full max-w-4xl">
           {quickActions.map((action, index) => (
-            <button
+            <motion.button
               key={index}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={action.action}
-              className="bg-white bg-opacity-80 hover:bg-opacity-100 rounded-xl p-4 flex flex-col items-center justify-center shadow-sm transition-all duration-200 hover:shadow-md"
+              className={`bg-gradient-to-br ${action.color} rounded-2xl p-6 flex flex-col items-center justify-center shadow-lg transition-all duration-300 hover:shadow-xl`}
             >
-              <span className="text-2xl mb-2">{action.icon}</span>
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-4xl mb-3">{action.icon}</span>
+              <span className="text-white font-medium text-lg">
                 {action.label}
               </span>
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
 
       {/* Footer */}
-      <div className="text-center text-gray-500 text-sm mt-8">
-        Have a wonderful day!
-      </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="text-center text-gray-500 text-sm mt-12"
+      >
+        Have a wonderful day! ✨
+      </motion.div>
     </div>
   );
 };
