@@ -18,6 +18,7 @@ import Unsplash from "./page/Unsplash";
 import Lorem from "./page/Lorem";
 import Photoshop from "./page/Photoshop";
 import Paint from "./page/Paint";
+import Player from "./page/Player";
 
 function App() {
   const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ function App() {
             <Route path="/lorem" element={<Lorem />} />
             <Route path="/photoshop" element={<Photoshop />} />
             <Route path="/paint" element={<Paint />} />
+            <Route path="/player" element={<Player />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

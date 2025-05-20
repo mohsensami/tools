@@ -31,6 +31,7 @@ const menu = [
   { name: "Lorem", icon: <SquareStack />, link: "/lorem" },
   { name: "Photoshop", icon: <Image />, link: "/photoshop" },
   { name: "Paint", icon: <Brush />, link: "/paint" },
+  { name: "Player", icon: <Brush />, link: "/player" },
 ];
 
 const Sidebar = () => {
