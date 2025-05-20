@@ -9,6 +9,10 @@ const Player = () => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Clean up the previous URL if it exists
+      if (mediaUrl) {
+        URL.revokeObjectURL(mediaUrl);
+      }
       const url = URL.createObjectURL(file);
       setMediaUrl(url);
       setMediaType(file.type.startsWith("audio/") ? "audio" : "video");
@@ -16,7 +20,10 @@ const Player = () => {
   };
 
   const handleClick = () => {
-    fileInputRef.current?.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Reset the input value
+      fileInputRef.current.click();
+    }
   };
 
   return (
@@ -43,6 +50,13 @@ const Player = () => {
             <button className={styles.changeFileButton} onClick={handleClick}>
               Change File
             </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".mp3,.mp4"
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
           </div>
         )}
       </div>
