@@ -15,6 +15,7 @@ import {
   Bitcoin,
   Image,
   Brush,
+  MonitorPlay,
 } from "lucide-react";
 
 const menu = [
@@ -31,7 +32,7 @@ const menu = [
   { name: "Lorem", icon: <SquareStack />, link: "/lorem" },
   { name: "Photoshop", icon: <Image />, link: "/photoshop" },
   { name: "Paint", icon: <Brush />, link: "/paint" },
-  { name: "Player", icon: <Brush />, link: "/player" },
+  { name: "Player", icon: <MonitorPlay />, link: "/player" },
 ];
 
 const Sidebar = () => {
