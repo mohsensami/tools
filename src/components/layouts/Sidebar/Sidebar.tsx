@@ -16,6 +16,7 @@ import {
   Image,
   Brush,
   MonitorPlay,
+  MessageCircle,
 } from "lucide-react";
 
 const menu = [
@@ -33,6 +34,7 @@ const menu = [
   { name: "Photoshop", icon: <Image />, link: "/photoshop" },
   { name: "Paint", icon: <Brush />, link: "/paint" },
   { name: "Player", icon: <MonitorPlay />, link: "/player" },
+  { name: "Chat", icon: <MessageCircle />, link: "/chat" },
 ];
 
 const Sidebar = () => {

@@ -19,7 +19,7 @@ import Lorem from "./page/Lorem";
 import Photoshop from "./page/Photoshop";
 import Paint from "./page/Paint";
 import Player from "./page/Player";
-
+import Chat from "./page/Chat";
 function App() {
   const queryClient = new QueryClient();
   return (
@@ -42,6 +42,7 @@ function App() {
             <Route path="/photoshop" element={<Photoshop />} />
             <Route path="/paint" element={<Paint />} />
             <Route path="/player" element={<Player />} />
+            <Route path="/chat" element={<Chat />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
