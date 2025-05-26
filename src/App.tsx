@@ -1,8 +1,8 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import "./App.css";
 import PageLayout from "./components/hoc/PageLayout";
-import Home from "./page/Home";
+// import Home from "./page/Home";
 import Movies from "./page/movies/Movies";
 import NotFound from "./page/NotFound";
 import PowerSupply from "./page/PowerSupply";
@@ -27,7 +27,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <Routes>
           <Route element={<PageLayout />}>
-            <Route path="/" element={<Home />} />
+            {/* <Route path="/" element={<Home />} /> */}
             <Route path="/movies" element={<Movies />} />
             <Route path="/movie/:id" element={<Movie />} />
             <Route path="/power-supply-calculator" element={<PowerSupply />} />
@@ -43,6 +43,7 @@ function App() {
             <Route path="/paint" element={<Paint />} />
             <Route path="/player" element={<Player />} />
             <Route path="/chat" element={<Chat />} />
+            <Route path="/" element={<Navigate to="/weather" replace />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

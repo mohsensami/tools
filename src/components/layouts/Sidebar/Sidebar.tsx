@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 const menu = [
-  { name: "Home", icon: <House />, link: "/" },
+  // { name: "Home", icon: <House />, link: "/" },
   { name: "Movies", icon: <Clapperboard />, link: "/movies" },
   { name: "PowerSupply", icon: <Cable />, link: "/power-supply-calculator" },
   { name: "Crypto", icon: <Bitcoin />, link: "/crypto" },
