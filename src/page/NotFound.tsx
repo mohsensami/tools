@@ -12,24 +12,24 @@ const NotFound = () => {
               404
             </h1>
             <h2 className="text-4xl font-semibold text-gray-800 mt-4 mb-6 animate-slideUp">
-              صفحه مورد نظر یافت نشد
+              Page Not Found
             </h2>
             <p className="text-xl text-gray-600 mb-8 animate-slideUp">
-              متأسفانه صفحه‌ای که به دنبال آن هستید وجود ندارد یا به آدرس دیگری
-              منتقل شده است.
+              Sorry, the page you are looking for doesn't exist or has been
+              moved to a different location.
             </p>
             <div className="space-x-4">
               <button
                 onClick={() => navigate("/")}
                 className="bg-gradient-to-r from-purple-400 to-blue-500 hover:from-purple-500 hover:to-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95"
               >
-                بازگشت به خانه
+                Back to Home
               </button>
               <button
                 onClick={() => navigate("/contact")}
                 className="bg-gradient-to-r from-red-400 to-red-500 hover:from-red-500 hover:to-red-600 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 hover:scale-105 active:scale-95"
               >
-                تماس با ما
+                Contact Us
               </button>
             </div>
           </div>
