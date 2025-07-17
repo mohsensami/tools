@@ -20,6 +20,8 @@ import Photoshop from "./page/Photoshop";
 import Paint from "./page/Paint";
 import Player from "./page/Player";
 import Chat from "./page/Chat";
+import Map from "./page/Map";
+
 function App() {
   const queryClient = new QueryClient();
   return (
@@ -43,6 +45,7 @@ function App() {
             <Route path="/paint" element={<Paint />} />
             <Route path="/player" element={<Player />} />
             <Route path="/chat" element={<Chat />} />
+            <Route path="/map" element={<Map />} />
             <Route path="/" element={<Navigate to="/weather" replace />} />
             <Route path="*" element={<NotFound />} />
           </Route>

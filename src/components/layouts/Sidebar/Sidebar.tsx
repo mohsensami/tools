@@ -17,6 +17,7 @@ import {
   Brush,
   MonitorPlay,
   MessageCircle,
+  MapPinned,
 } from "lucide-react";
 
 const menu = [
@@ -35,6 +36,7 @@ const menu = [
   { name: "Paint", icon: <Brush />, link: "/paint" },
   { name: "Player", icon: <MonitorPlay />, link: "/player" },
   { name: "Chat", icon: <MessageCircle />, link: "/chat" },
+  { name: "Map", icon: <MapPinned />, link: "/map" },
 ];
 
 const Sidebar = () => {
