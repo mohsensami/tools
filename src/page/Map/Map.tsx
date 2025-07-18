@@ -3,6 +3,10 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { LatLngExpression } from "leaflet";
 
+import L from "leaflet";
+import markerShadow from "/public/images/marker-shadow.png";
+import markerIcon from "/public/images/marker-icon.png";
+
 const center: LatLngExpression = [32.4279, 53.688];
 
 const Map = () => {
@@ -12,6 +16,16 @@ const Map = () => {
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<any[]>([]);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const customIcon = L.icon({
+    iconUrl: markerIcon,
+    //iconSize: [30, 40], // size of the icon
+    //iconAnchor: [15, 40], // point of the icon which will correspond to marker's location
+    //popupAnchor: [0, -40], // point from which the popup should open relative to the iconAnchor
+    shadowUrl: markerShadow,
+    // shadowSize: [41, 41],
+    // shadowAnchor: [13, 41],
+  });
 
   // Debounced search effect
   useEffect(() => {
@@ -131,9 +145,9 @@ const Map = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={position}>
+        <Marker icon={customIcon} position={position}>
           <Popup>
-            {search ? search : "A pretty CSS3 popup. \nEasily customizable."}
+            {search ? search : "A pretty CSS3 popup. \n Easily customizable."}
           </Popup>
         </Marker>
       </MapContainer>
