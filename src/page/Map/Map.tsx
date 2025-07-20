@@ -145,11 +145,13 @@ const Map = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker icon={customIcon} position={position}>
-          <Popup>
-            {search ? search : "A pretty CSS3 popup. \n Easily customizable."}
-          </Popup>
-        </Marker>
+        {search && (
+          <Marker icon={customIcon} position={position}>
+            <Popup>
+              {search ? search : "A pretty CSS3 popup. \n Easily customizable."}
+            </Popup>
+          </Marker>
+        )}
       </MapContainer>
     </div>
   );
