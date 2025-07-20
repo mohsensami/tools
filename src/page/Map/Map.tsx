@@ -1,5 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  GeoJSON,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { LatLngExpression } from "leaflet";
 
@@ -9,12 +16,25 @@ import markerIcon from "/public/images/marker-icon.png";
 
 const center: LatLngExpression = [32.4279, 53.688];
 
+// Helper component to fit bounds when selectedBounds changes
+const FitBounds = ({ bounds }: { bounds: any }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (bounds) {
+      map.fitBounds(bounds);
+    }
+  }, [bounds, map]);
+  return null;
+};
+
 const Map = () => {
   const [search, setSearch] = useState("");
   const [position, setPosition] = useState<LatLngExpression>(center);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<any[]>([]);
+  const [selectedGeoJson, setSelectedGeoJson] = useState<any | null>(null);
+  const [selectedBounds, setSelectedBounds] = useState<any | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const customIcon = L.icon({
@@ -39,7 +59,7 @@ const Map = () => {
     debounceRef.current = setTimeout(async () => {
       try {
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          `https://nominatim.openstreetmap.org/search?format=json&polygon_geojson=1&q=${encodeURIComponent(
             search
           )}`
         );
@@ -59,9 +79,16 @@ const Map = () => {
   }, [search]);
 
   const handleResultClick = (item: any) => {
-    const lat = parseFloat(item.lat);
-    const lon = parseFloat(item.lon);
-    setPosition([lat, lon]);
+    // Parse boundingbox and geojson
+    const bounds = item.boundingbox
+      ? [
+          [parseFloat(item.boundingbox[0]), parseFloat(item.boundingbox[2])],
+          [parseFloat(item.boundingbox[1]), parseFloat(item.boundingbox[3])],
+        ]
+      : null;
+    setSelectedBounds(bounds);
+    setSelectedGeoJson(item.geojson || null);
+    setPosition([parseFloat(item.lat), parseFloat(item.lon)]);
     setSearch(item.display_name);
     setResults([]);
     setError(null);
@@ -75,15 +102,28 @@ const Map = () => {
     setError(null);
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        `https://nominatim.openstreetmap.org/search?format=json&polygon_geojson=1&q=${encodeURIComponent(
           search
         )}`
       );
       const data = await res.json();
       if (data && data.length > 0) {
-        const lat = parseFloat(data[0].lat);
-        const lon = parseFloat(data[0].lon);
-        setPosition([lat, lon]);
+        const item = data[0];
+        const bounds = item.boundingbox
+          ? [
+              [
+                parseFloat(item.boundingbox[0]),
+                parseFloat(item.boundingbox[2]),
+              ],
+              [
+                parseFloat(item.boundingbox[1]),
+                parseFloat(item.boundingbox[3]),
+              ],
+            ]
+          : null;
+        setSelectedBounds(bounds);
+        setSelectedGeoJson(item.geojson || null);
+        setPosition([parseFloat(item.lat), parseFloat(item.lon)]);
         setResults([]);
       } else {
         setError("Location not found.");
@@ -145,13 +185,8 @@ const Map = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {search && (
-          <Marker icon={customIcon} position={position}>
-            <Popup>
-              {search ? search : "A pretty CSS3 popup. \n Easily customizable."}
-            </Popup>
-          </Marker>
-        )}
+        {selectedGeoJson && <GeoJSON data={selectedGeoJson} />}
+        {selectedBounds && <FitBounds bounds={selectedBounds} />}
       </MapContainer>
     </div>
   );
