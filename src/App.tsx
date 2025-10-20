@@ -21,6 +21,7 @@ import Paint from "./page/Paint";
 import Player from "./page/Player";
 import Chat from "./page/Chat";
 import Map from "./page/Map";
+import Gold from "./page/Gold";
 
 function App() {
   const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ function App() {
             <Route path="/player" element={<Player />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/map" element={<Map />} />
+            <Route path="/gold" element={<Gold />} />
             <Route path="/" element={<Navigate to="/weather" replace />} />
             <Route path="*" element={<NotFound />} />
           </Route>

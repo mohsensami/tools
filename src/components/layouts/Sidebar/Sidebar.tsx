@@ -18,6 +18,7 @@ import {
   MonitorPlay,
   MessageCircle,
   MapPinned,
+  Sparkle,
 } from "lucide-react";
 
 const menu = [
@@ -37,6 +38,7 @@ const menu = [
   { name: "Player", icon: <MonitorPlay />, link: "/player" },
   { name: "Chat", icon: <MessageCircle />, link: "/chat" },
   { name: "Map", icon: <MapPinned />, link: "/map" },
+  { name: "Gold", icon: <Sparkle />, link: "/gold" },
 ];
 
 const Sidebar = () => {
