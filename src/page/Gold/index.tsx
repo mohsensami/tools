@@ -11,8 +11,10 @@ import GoldPriceInput from "./components/GoldPriceInput";
 import GoldBubbleDisplay from "./components/GoldBubbleDisplay";
 import ApiStatus from "./components/ApiStatus";
 import ManualInputs from "./components/ManualInputs";
+import ApiKeySetup from "./components/ApiKeySetup";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Info, Settings } from "lucide-react";
 import Spinner from "@/components/Spinner";
 
 const Gold = () => {
@@ -20,6 +22,7 @@ const Gold = () => {
   const [manualGoldPrice, setManualGoldPrice] = useState<number>(0);
   const [manualExchangeRate, setManualExchangeRate] = useState<number>(0);
   const [showManualInputs, setShowManualInputs] = useState<boolean>(false);
+  const [showApiSetup, setShowApiSetup] = useState<boolean>(false);
 
   const { data: goldData, isLoading: goldLoading } = useQuery({
     queryKey: ["gold-price"],
@@ -40,12 +43,6 @@ const Gold = () => {
     manualGoldPrice > 0 ? manualGoldPrice : goldData?.price || 0;
   const effectiveExchangeRate =
     manualExchangeRate > 0 ? manualExchangeRate : exchangeData?.usdToIrr || 0;
-
-  // Check if we're using default/fallback values
-  const isUsingDefaults =
-    ((!goldData || goldData.price === 2400) && manualGoldPrice === 0) ||
-    ((!exchangeData || exchangeData.usdToIrr === 45000) &&
-      manualExchangeRate === 0);
 
   const bubbleData = useMemo(() => {
     if (!effectiveGoldPrice || !effectiveExchangeRate || marketPrice <= 0) {
@@ -101,25 +98,36 @@ const Gold = () => {
                 توجه: قیمت‌های لحظه‌ای هر ۶۰ ثانیه بروزرسانی می‌شوند.
               </p>
               <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-700">
-                <p className="text-xs font-semibold mb-1">نکته مهم:</p>
+                <p className="text-xs font-semibold mb-1 text-red-600 dark:text-red-400">
+                  ⚠️ نکته بسیار مهم:
+                </p>
                 <p className="text-xs">
-                  در صورت عدم دسترسی به APIهای رایگان، می‌توانید قیمت‌ها را به
-                  صورت دستی وارد کنید. برای استفاده از APIهای پیشرفته‌تر (مثل
-                  GoldAPI) که نیاز به ثبت‌نام دارند، لطفاً با توسعه‌دهنده تماس
-                  بگیرید.
+                  APIهای رایگان نرخ <strong>رسمی</strong> دلار را نشان می‌دهند
+                  که با نرخ <strong>بازار آزاد ایران</strong> تفاوت زیادی دارد.
+                  برای دقت بیشتر، لطفاً قیمت طلای جهانی و نرخ دلار بازار آزاد را
+                  به صورت دستی وارد کنید.
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* API Status Warning */}
-        {isUsingDefaults && (
-          <ApiStatus
-            isUsingDefaults={true}
-            onManualInput={() => setShowManualInputs(true)}
-          />
-        )}
+        {/* API Key Setup Guide */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">راهنمای تنظیمات</h2>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowApiSetup(!showApiSetup)}
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            {showApiSetup ? "بستن راهنما" : "راهنمای API Key"}
+          </Button>
+        </div>
+        {showApiSetup && <ApiKeySetup />}
+
+        {/* API Status Warning - Always show since free APIs don't reflect market rates */}
+        <ApiStatus onManualInput={() => setShowManualInputs(true)} />
 
         {/* Manual Inputs */}
         {showManualInputs && (
