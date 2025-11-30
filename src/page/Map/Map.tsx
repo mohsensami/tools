@@ -1,18 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  GeoJSON,
-  useMap,
-} from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { LatLngExpression } from "leaflet";
-
-import L from "leaflet";
-import markerShadow from "/public/images/marker-shadow.png";
-import markerIcon from "/public/images/marker-icon.png";
+import { Search, MapPin, Loader2, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const center: LatLngExpression = [32.4279, 53.688];
 
@@ -37,16 +29,6 @@ const Map = () => {
   const [selectedBounds, setSelectedBounds] = useState<any | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const customIcon = L.icon({
-    iconUrl: markerIcon,
-    //iconSize: [30, 40], // size of the icon
-    //iconAnchor: [15, 40], // point of the icon which will correspond to marker's location
-    //popupAnchor: [0, -40], // point from which the popup should open relative to the iconAnchor
-    shadowUrl: markerShadow,
-    // shadowSize: [41, 41],
-    // shadowAnchor: [13, 41],
-  });
-
   // Debounced search effect
   useEffect(() => {
     if (!search.trim()) {
@@ -65,9 +47,9 @@ const Map = () => {
         );
         const data = await res.json();
         setResults(data);
-        setError(data.length === 0 ? "No results found." : null);
+        setError(data.length === 0 ? "نتیجه‌ای یافت نشد." : null);
       } catch (err) {
-        setError("Error searching location.");
+        setError("خطا در جستجوی مکان.");
         setResults([]);
       } finally {
         setLoading(false);
@@ -126,68 +108,129 @@ const Map = () => {
         setPosition([parseFloat(item.lat), parseFloat(item.lon)]);
         setResults([]);
       } else {
-        setError("Location not found.");
+        setError("مکان یافت نشد.");
       }
     } catch (err) {
-      setError("Error searching location.");
+      setError("خطا در جستجوی مکان.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
-      <div className="bg-gray-400 flex flex-col items-center py-2 relative">
-        <form onSubmit={handleSearch} className="w-full flex justify-center ">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search location..."
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2 "
-            style={{ maxWidth: 350 }}
-          />
-          <button
-            type="submit"
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-            disabled={loading}
-          >
-            {loading ? "Searching..." : "Search"}
-          </button>
-          {error && (
-            <span style={{ color: "red", marginLeft: 12 }}>{error}</span>
-          )}
-        </form>
-        {results.length > 0 && (
-          <ul
-            style={{ zIndex: 9999999, position: "absolute" }}
-            className="absolute top-12 z-40 bg-white border border-gray-300 rounded-lg mt-2 w-[350px] max-h-96 overflow-auto shadow-lg"
-          >
-            {results.map((item, idx) => (
-              <li
-                key={item.place_id}
-                className="px-4 py-2 cursor-pointer hover:bg-blue-100"
-                onClick={() => handleResultClick(item)}
-              >
-                {item.display_name}
-              </li>
-            ))}
-          </ul>
-        )}
+    <div className="relative">
+      {/* Search Section */}
+      <div className="relative bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-700 shadow-sm">
+        <div className="container mx-auto px-4 py-6">
+          <div className="max-w-2xl mx-auto">
+            <div className="flex flex-col gap-3">
+              {/* Search Form */}
+              <form onSubmit={handleSearch} className="relative flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500" />
+                  <Input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="جستجوی مکان (مثال: تهران، ایران)"
+                    dir="rtl"
+                    className="pl-10 pr-10 h-12 text-base bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 shadow-sm"
+                  />
+                  {search && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearch("");
+                        setResults([]);
+                        setError(null);
+                      }}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="h-12 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      در حال جستجو...
+                    </>
+                  ) : (
+                    <>
+                      <Search className="h-4 w-4 mr-2" />
+                      جستجو
+                    </>
+                  )}
+                </Button>
+              </form>
+
+              {/* Error Message */}
+              {error && (
+                <div className="px-4 py-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm flex items-center gap-2">
+                  <X className="h-4 w-4" />
+                  {error}
+                </div>
+              )}
+
+              {/* Results Dropdown */}
+              {results.length > 0 && (
+                <div className="relative z-50">
+                  <div className="absolute z-50 top-0 left-0 right-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl max-h-96 overflow-hidden">
+                    <div className="overflow-y-auto max-h-96 z-50">
+                      {results.map((item) => (
+                        <button
+                          key={item.place_id}
+                          type="button"
+                          onClick={() => handleResultClick(item)}
+                          className="w-full px-4 py-3 text-right hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-b-0 group"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 mt-0.5">
+                              <MapPin className="h-5 w-5 text-blue-500 dark:text-blue-400 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                                {item.display_name}
+                              </p>
+                              {item.type && (
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                  {item.type}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
-      <MapContainer
-        center={position}
-        zoom={6}
-        style={{ height: "800px", width: "100%" }}
-        key={position.toString()}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {selectedGeoJson && <GeoJSON data={selectedGeoJson} />}
-        {selectedBounds && <FitBounds bounds={selectedBounds} />}
-      </MapContainer>
+
+      {/* Map Container */}
+      <div className="z-10">
+        <MapContainer
+          center={position}
+          zoom={6}
+          style={{ height: "800px", width: "100%" }}
+          key={position.toString()}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {selectedGeoJson && <GeoJSON data={selectedGeoJson} />}
+          {selectedBounds && <FitBounds bounds={selectedBounds} />}
+        </MapContainer>
+      </div>
     </div>
   );
 };
