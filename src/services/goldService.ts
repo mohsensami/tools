@@ -1,8 +1,9 @@
 import axios from "axios";
 
 // Constants for gold calculations
-const GRAMS_PER_OUNCE = 31.103476;
+const GRAMS_PER_OUNCE = 31.103476; // 1 troy ounce = 31.103476 grams
 const KARAT_18_PURITY = 0.75; // 18 karat = 75% gold
+const RIAL_PER_TOMAN = 10; // 1 Toman = 10 Rial
 
 // Note: All APIs used here are FREE and don't require API keys
 // Using free APIs: nerkh.io, exchangerate-api.com, metals.live, bonbast.com
@@ -118,14 +119,28 @@ export const fetchExchangeRate = async (): Promise<ExchangeRateData> => {
     });
 
     if (response.data) {
-      // nerkh.io might return price in different formats
+      // nerkh.io returns price - need to determine if it's Rial or Toman
       const price =
         response.data.price || response.data.sell || response.data.value;
       if (price && typeof price === "number") {
-        // If it's in Rial, convert to Toman (divide by 10)
-        // If it's already in Toman, use as is
-        const tomanRate =
-          price > 100000 ? Math.round(price / 10) : Math.round(price);
+        // Market rate is typically 100,000+ Toman (1,000,000+ Rial)
+        // Logic:
+        // - If price > 500,000: definitely Rial, convert to Toman (divide by 10)
+        // - If 100,000 < price <= 500,000: likely Toman, use as is (market rate range)
+        // - If price < 100,000: too small, might be wrong data or already Toman
+        let tomanRate: number;
+        if (price > 500000) {
+          // Definitely Rial (e.g., 1,770,000 Rial = 177,000 Toman)
+          tomanRate = Math.round(price / 10);
+        } else if (price >= 100000 && price <= 500000) {
+          // Likely already in Toman (e.g., 177,000 Toman)
+          tomanRate = Math.round(price);
+        } else {
+          // Less than 100k - might be wrong, but if > 50k assume it's Rial
+          // Otherwise use as is (though this shouldn't happen with correct APIs)
+          tomanRate =
+            price > 50000 ? Math.round(price / 10) : Math.round(price);
+        }
         return {
           usdToIrr: tomanRate,
           timestamp: Date.now(),
@@ -144,11 +159,24 @@ export const fetchExchangeRate = async (): Promise<ExchangeRateData> => {
 
     if (response.data && response.data.usd) {
       const usdData = response.data.usd;
-      // bonbast usually returns in Toman
+      // bonbast returns price - need to determine if it's Rial or Toman
       const price = usdData.sell || usdData.price || usdData.value;
       if (price && typeof price === "number") {
+        // Same logic as nerkh.io
+        let tomanRate: number;
+        if (price > 500000) {
+          // Definitely Rial, convert to Toman
+          tomanRate = Math.round(price / 10);
+        } else if (price >= 100000 && price <= 500000) {
+          // Likely already in Toman
+          tomanRate = Math.round(price);
+        } else {
+          // Less than 100k - might be wrong, but if > 50k assume it's Rial
+          tomanRate =
+            price > 50000 ? Math.round(price / 10) : Math.round(price);
+        }
         return {
-          usdToIrr: Math.round(price),
+          usdToIrr: tomanRate,
           timestamp: Date.now(),
         };
       }
@@ -242,22 +270,35 @@ export const fetchIranianGoldPrice = async (): Promise<IranianGoldPrice> => {
 };
 
 /**
- * Calculates the real price of 18k gold per gram in IRR
+ * Calculates the real price of 18k gold per gram in Toman
+ * Based on tgju.org calculation method
+ *
+ * Formula: (Gold price per ounce in USD × USD to Rial rate) ÷ 31.103476 × 0.75 ÷ 10
+ *
+ * Note: The exchange rate from fetchExchangeRate is in Toman
+ * We need to convert to Rial for calculation (to match tgju.org), then back to Toman for display
  */
 export const calculateRealPrice18k = (
   goldPricePerOunceUSD: number,
-  usdToIrr: number
+  usdToToman: number
 ): number => {
-  // Convert ounce price to IRR
-  const goldPricePerOunceIRR = goldPricePerOunceUSD * usdToIrr;
+  // Convert Toman to Rial (1 Toman = 10 Rial)
+  const usdToRial = usdToToman * RIAL_PER_TOMAN;
+
+  // Convert ounce price to Rial
+  const goldPricePerOunceRial = goldPricePerOunceUSD * usdToRial;
 
   // Convert to price per gram (24k)
-  const goldPricePerGram24k = goldPricePerOunceIRR / GRAMS_PER_OUNCE;
+  // 1 ounce = 31.103476 grams
+  const goldPricePerGram24kRial = goldPricePerOunceRial / GRAMS_PER_OUNCE;
 
-  // Convert to 18k (75% purity)
-  const goldPricePerGram18k = goldPricePerGram24k * KARAT_18_PURITY;
+  // Convert to 18k (75% purity) - still in Rial
+  const goldPricePerGram18kRial = goldPricePerGram24kRial * KARAT_18_PURITY;
 
-  return Math.round(goldPricePerGram18k);
+  // Convert back to Toman for display (divide by 10)
+  const goldPricePerGram18kToman = goldPricePerGram18kRial / RIAL_PER_TOMAN;
+
+  return Math.round(goldPricePerGram18kToman);
 };
 
 /**
